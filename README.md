@@ -1,10 +1,27 @@
-# frontend
+# Frontend
 
-In case you want to run this project you have to excecute a
-postgres database and add the connection string into a .env file.
-Like so:
+MeetUn Frontend. Find UNAL groups and events, easily. Post your own events and groups.
 
-```env
-# Make sure to override these in deployment
-DATABASE_URL=postgresql://postgres:@localhost:5432/next-prisma-starter-new
+Frontend Developed with NextJS, set with:
+
+- Typescript
+- Tailwind
+- EsLinter
+
+Also, aditional tools:
+
+- tRPC, for APIs
+
+# Running Locally
+
+After cloning the repo, don't forget to install nodejs dependencies with:
+
+```sh
+npm i
+```
+
+Then run the following command, to execute the frontend as dev (it's lighter than the deploy build, and doesn't verify ts or eslinter issues):
+
+```sh
+npm run dev
 ```
