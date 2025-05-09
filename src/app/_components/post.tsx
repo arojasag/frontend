@@ -17,7 +17,7 @@ export function LatestPost() {
   });
 
   return (
-    <div className="w-full max-w-xs">
+    <div className="flex flex-col items-center justify-center w-full max-w-xs min-h-[25vh] gap-5">
       {latestPost ? (
         <p className="truncate">Your most recent post: {latestPost.name}</p>
       ) : (
