@@ -25,3 +25,29 @@ Then run the following command, to execute the frontend as dev (it's lighter tha
 ```sh
 npm run dev
 ```
+
+# Running on a docker container
+
+The repo contains a dockerfile. You can run the container either with a dev build mode or the deploy build mode.
+
+You should first create the image with:
+
+```sh
+docker build --build-args mode=<mode> -t <image_name>
+```
+
+mode can be:
+- prod, which means "production"
+- dev, which means "dev"
+
+By default, the mode is set to prod, so if you want to run the production build, you may simply run:
+
+```sh
+docker build -t <image_name>
+```
+
+Then execute the container with:
+
+```sh
+docker run -d -p 3000:3000 <image_name>
+```
