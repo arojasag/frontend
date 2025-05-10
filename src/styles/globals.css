@@ -4,3 +4,28 @@
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
+
+@layer components {
+  .navbar {
+  @apply flex justify-between items-center py-2 px-5 lg:px-20 gap-4 sticky top-0 z-50 transition-colors duration-300 ease-in-out;
+  }
+  
+  .text-hero {
+    @apply text-[64px] leading-[76px] font-semibold;
+  }
+  .h1 {
+    @apply text-[38px] leading-[42px] font-bold;
+  }
+  .h2 {
+    @apply text-[24px] leading-[36px] font-bold;
+  }
+  .h3 {
+    @apply text-[19px] leading-[28px] font-semibold;
+  }
+  .h4 {
+    @apply text-[18px] leading-[25px] font-semibold;
+  }
+  .h5 {
+    @apply text-[16px] leading-[24px] font-normal;
+  }
+}
