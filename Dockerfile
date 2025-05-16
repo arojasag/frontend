@@ -5,6 +5,9 @@ WORKDIR /Swarch2A_Frontend
 COPY package*.json ./
 RUN npm install
 
+# Disable Next.js telemetry
+RUN npx next telemetry disable
+
 COPY . .
 
 # The default value is `prod`
