@@ -70,3 +70,30 @@ In dettached mode:
 ```sh
 docker run -d -p 3000:3000 <image_name>
 ```
+
+## Developing
+
+### Hot-reload in Docker
+
+To enable hot-reload development in Docker, run the container with a volume mount
+to sync your local changes:
+
+1. Build in `dev` mode:
+
+    ```sh
+    docker build --build-arg mode=dev -t <image_name>
+    ```
+
+1. Mount current directory into the container:
+
+    ```sh
+    docker run -p 3000:3000 -v $(pwd):/Swarch2A_Frontend <image_name>
+    ```
+
+> You may also prefer running it in dettached mode. Like this:
+
+```sh
+docker run -d -p 3000:3000 -v $(pwd):/Swarch2A_Frontend <image_name>
+```
+
+This will watch for file changes and automatically rebuild.
