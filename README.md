@@ -12,6 +12,10 @@ Also, aditional tools:
 
 - tRPC, for APIs
 
+> [!TIP]
+> Use hot-reload with Docker to develop without worrying about dependencies by
+> following [these instructions](#hot-reload-in-docker).
+
 ## Running the frontend
 
 ### Running Locally
