@@ -126,9 +126,9 @@ const AuthForm = <T extends FieldValues>({
           {errorMessage && <p className="error-message">*{errorMessage}</p>}
 
           <div className="flex w-full items-center">
-            <div className="flex-grow border-t border-neutral-300"></div>
+            <div className="flex-grow border-t border-neutral-300" />
             <span className="body-2 mx-4 text-neutral-900">O</span>
-            <div className="flex-grow border-t border-neutral-300"></div>
+            <div className="flex-grow border-t border-neutral-300" />
           </div>
 
           <div className="flex justify-center space-x-12">google</div>

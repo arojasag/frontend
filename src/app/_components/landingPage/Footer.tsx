@@ -33,47 +33,13 @@ const Footer = () => (
             src="/assets/meetUN-white.svg"
             width={200}
             height={200}
-            alt="LudoStats Logo"
+            alt="MeetUN Logo"
           />
-          <div className="flex flex-col space-y-1 text-center md:text-left">
+          <div className="mb-5 flex flex-col space-y-1 text-center md:text-left">
             <p className="text-sm text-gray-400">Copyright © 2025 MeetUN.</p>
             <p className="text-sm text-gray-400">
               Todos los derechos reservados.
             </p>
-          </div>
-          <div className="flex space-x-4">
-            {/* <Link
-              href="/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex h-10 w-10 transform items-center justify-center rounded-full bg-gray-800 text-center text-white transition hover:scale-110"
-            >
-              <FaInstagram className="h-6 w-6" />
-            </Link>
-            <Link
-              href="/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex h-10 w-10 transform items-center justify-center rounded-full bg-gray-800 text-center text-white transition hover:scale-110"
-            >
-              <FaXTwitter className="h-6 w-6" />
-            </Link>
-            <Link
-              href="/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex h-10 w-10 transform items-center justify-center rounded-full bg-gray-800 text-center text-white transition hover:scale-110"
-            >
-              <FaThreads className="h-6 w-6" />
-            </Link>
-            <Link
-              href="/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex h-10 w-10 transform items-center justify-center rounded-full bg-gray-800 text-center text-white transition hover:scale-110"
-            >
-              <FaLinkedinIn className="h-6 w-6" />
-            </Link> */}
           </div>
         </div>
         <div className="flex w-full flex-col gap-5 sm:px-16 md:justify-end md:px-0 lg:flex-row">
