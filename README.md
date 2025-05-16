@@ -79,8 +79,9 @@ docker run -d -p 3000:3000 <image_name>
 
 ### Hot-reload in Docker
 
-To enable hot-reload development in Docker, run the container with a volume mount
-to sync your local changes:
+This will watch for file changes and automatically rebuild. To enable hot-reload
+development in Docker, run the container with a volume mount to sync your local
+changes in `dev` mode:
 
 1. Build in `dev` mode:
 
@@ -99,5 +100,3 @@ to sync your local changes:
 ```sh
 docker run -d -p 3000:3000 -v $(pwd):/Swarch2A_Frontend <image_name>
 ```
-
-This will watch for file changes and automatically rebuild.
