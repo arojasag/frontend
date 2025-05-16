@@ -12,7 +12,9 @@ Also, aditional tools:
 
 - tRPC, for APIs
 
-# Running Locally
+## Running the frontend
+
+### Running Locally
 
 After cloning the repo, don't forget to install nodejs dependencies with:
 
@@ -26,7 +28,7 @@ Then run the following command, to execute the frontend as dev (it's lighter tha
 npm run dev
 ```
 
-# Running on a docker container
+### Running using Docker
 
 The repo contains a dockerfile. You can run the container either with a dev build mode or the deploy build mode.
 
