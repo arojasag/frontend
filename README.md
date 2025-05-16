@@ -30,6 +30,14 @@ npm run dev
 
 ### Running using Docker
 
+> [!IMPORTANT]
+> Make sure your `.dockerignore` file is set up correctly to exclude any
+> unnecessary files. Like so:
+
+```sh
+cat .gitignore .prodignore > .dockerignore
+```
+
 The repo contains a dockerfile. You can run the container either with a `dev` or
 `prod` build mode.
 

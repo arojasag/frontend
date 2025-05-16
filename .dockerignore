@@ -134,12 +134,20 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+# --- .prodignore ---
+# Ignore files and directories that should not be included in the production build.
 
+# git related files
 .git
 .gitignore
+
+# Docs
 README.md
-.results
-scripts
-*Dockerfile*
-node_modules
-.env
+
+# Docker related files
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# Allow Environment Variables
+!.env
