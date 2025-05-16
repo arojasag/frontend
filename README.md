@@ -16,6 +16,16 @@ Also, aditional tools:
 > Use hot-reload with Docker to develop without worrying about dependencies by
 > following [these instructions](#hot-reload-in-docker).
 
+---
+
+> [!IMPORTANT]
+> Make sure your `.dockerignore` file is set up correctly to exclude any
+> unnecessary files. Like so:
+
+```sh
+cat .gitignore .prodignore > .dockerignore
+```
+
 ## Running the frontend
 
 ### Running Locally
@@ -33,14 +43,6 @@ npm run dev
 ```
 
 ### Running using Docker
-
-> [!IMPORTANT]
-> Make sure your `.dockerignore` file is set up correctly to exclude any
-> unnecessary files. Like so:
-
-```sh
-cat .gitignore .prodignore > .dockerignore
-```
 
 The repo contains a dockerfile. You can run the container either with a `dev` or
 `prod` build mode.
