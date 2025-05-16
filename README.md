@@ -62,5 +62,11 @@ docker build -t <image_name>
 Then execute the container with:
 
 ```sh
+docker run -p 3000:3000 <image_name>
+```
+
+In dettached mode:
+
+```sh
 docker run -d -p 3000:3000 <image_name>
 ```
