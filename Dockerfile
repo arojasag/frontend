@@ -7,10 +7,13 @@ RUN npm install
 
 COPY . .
 
-#prod -> production; dev -> dev
+# The default value is `prod`
+#   `prod` -> production
+#   `dev` -> development
 ARG mode=prod
 ENV mode=${mode}
 
+RUN echo "Running in $mode mode"
 RUN if [ "$mode" = "prod" ]; then npm run build; fi
 
 EXPOSE 3000

@@ -30,7 +30,8 @@ npm run dev
 
 ### Running using Docker
 
-The repo contains a dockerfile. You can run the container either with a dev build mode or the deploy build mode.
+The repo contains a dockerfile. You can run the container either with a `dev` or
+`prod` build mode.
 
 You should first create the image with:
 
@@ -38,11 +39,13 @@ You should first create the image with:
 docker build --build-args mode=<mode> -t <image_name>
 ```
 
-mode can be:
-- prod, which means "production"
-- dev, which means "dev"
+`mode` can be:
 
-By default, the mode is set to prod, so if you want to run the production build, you may simply run:
+- `prod`, which means "production"
+- `dev`, which means "development"
+
+By default, the `mode` is set to `prod`, so if you want to run the production build,
+you may simply run:
 
 ```sh
 docker build -t <image_name>
