@@ -15,7 +15,7 @@ const FooterColumn = ({ title, links }: ColumnProps) => (
     <ul className="space-y-3">
       {links.map((link) => (
         <li key={link.name}>
-          <Link href={link.href} className="hover:underline">
+          <Link href={link.href} className="text-stone-300 hover:underline">
             {link.name}
           </Link>
         </li>
