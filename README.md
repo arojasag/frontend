@@ -26,6 +26,20 @@ Also, aditional tools:
 cat .gitignore .prodignore > .dockerignore
 ```
 
+---
+
+## Table of contents
+
+- [Frontend](#frontend)
+  - [Table of contents](#table-of-contents)
+  - [Running the frontend](#running-the-frontend)
+    - [Running Locally](#running-locally)
+    - [Running using Docker](#running-using-docker)
+  - [Developing](#developing)
+    - [Hot-reload in Docker](#hot-reload-in-docker)
+
+---
+
 ## Running the frontend
 
 ### Running Locally
