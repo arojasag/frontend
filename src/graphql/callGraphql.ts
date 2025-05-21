@@ -30,8 +30,8 @@ export const callGraphqlAPI = async<T> (
     
     try {
 
-        if (!mutation)  {   result = await serverClient.query( {query: req})                            }
-        else            {   result = await serverClient.mutate({mutation: req, variables: variables})   }
+        if (!mutation)  { result = await serverClient.query( {query: req, fetchPolicy: "no-cache"})                         }
+        else            { result = await serverClient.mutate({mutation: req, variables: variables, fetchPolicy: "no-cache"})}
         
         return { data: result.data as T };
         
@@ -47,10 +47,9 @@ export const callGraphqlAPI = async<T> (
         }
         else if (error instanceof Error)    {errors = error.message}
                 
-        console.error("GraphQL Operation Mistake: ", errors);
+        console.error("GraphQL Operation Mistake:", errors);
         throw new Error(errors);
 
     }
-
 
 }

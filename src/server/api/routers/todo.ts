@@ -1,12 +1,14 @@
-/** This router has some todo tRPC code, that is really just a template */
+/**
+ * This router has some todo tRPC code, that is really just a template
+ */
 
-// import { z } from "zod";
+import { z } from "zod";
 import { callGraphqlAPI } from "~/graphql/callGraphql";
-import { GET_TODOS } from "~/graphql/documents";
+import { CREATE_TODO, GET_TODOS } from "~/graphql/documents";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
-interface todo {
+export interface Todo {
     id: string,
     text: string,
     user: {
@@ -14,8 +16,8 @@ interface todo {
     }
 }
 
-interface TodoResponse {
-    todos: todo[]
+export interface TodoResponse {
+    todos: Todo[]
 }
 
 export const todoRouter = createTRPCRouter({
@@ -25,4 +27,20 @@ export const todoRouter = createTRPCRouter({
                 todos: (await callGraphqlAPI<TodoResponse>(GET_TODOS)).data   
             };
         }),
+    createTodo: publicProcedure
+        .input(z.object({
+            text: z.string(),
+            userId: z.string()
+        }))
+        .mutation(async({ input }) => {
+            const response = await callGraphqlAPI(
+                CREATE_TODO,
+                true,
+                { 
+                    text: input.text,
+                    userId: input.userId
+                }
+            );
+            return response;
+        })
 })

@@ -19,7 +19,7 @@ export const GET_TODOS = gql`
 
 /** Create a new TODO */
 export const CREATE_TODO = gql`
-  mutation CreateTodo($text: String!, $userId: ID!) {
+  mutation CreateTodo($text: String!, $userId: String!) {
     createTodo(input: { text: $text, userId: $userId }) {
       id
       text
