@@ -42,7 +42,7 @@ export const sampleEvents = [
     title: "Coffee + Friday Language exchange meeting La Castellana",
     description:
       "Un espacio mensual para practicar idiomas, conocer nuevas personas y compartir un café en La Castellana. ¡Trae tu mejor actitud!",
-    image: "/assets/universidad-nacional-de-colombia-banner.jpg", // imagen estática o de CDN
+    profile_pic: "/assets/universidad-nacional-de-colombia-banner.jpg", // imagen estática o de CDN
     place: "Café Aroma, La Castellana, Bogotá",
     starts_at: "2025-06-06T19:00:00-05:00", // viernes, 6 de junio de 2025, 7:00 PM (hora Colombia)
     ends_at: "2025-06-06T21:00:00-05:00", // hasta las 9:00 PM
@@ -53,7 +53,7 @@ export const sampleEvents = [
     title: "Coffee + Friday Language exchange meeting La Castellana",
     description:
       "Un espacio mensual para practicar idiomas, conocer nuevas personas y compartir un café en La Castellana. ¡Trae tu mejor actitud!",
-    image: "/assets/universidad-nacional-de-colombia-banner.jpg", // imagen estática o de CDN
+    profile_pic: "/assets/universidad-nacional-de-colombia-banner.jpg", // imagen estática o de CDN
     place: "Café Aroma, La Castellana, Bogotá",
     starts_at: "2025-06-06T19:00:00-05:00", // viernes, 6 de junio de 2025, 7:00 PM (hora Colombia)
     ends_at: "2025-06-06T21:00:00-05:00", // hasta las 9:00 PM
@@ -64,7 +64,7 @@ export const sampleEvents = [
     title: "Coffee + Friday Language exchange meeting La Castellana",
     description:
       "Un espacio mensual para practicar idiomas, conocer nuevas personas y compartir un café en La Castellana. ¡Trae tu mejor actitud!",
-    image: "/assets/universidad-nacional-de-colombia-banner.jpg", // imagen estática o de CDN
+    profile_pic: "/assets/universidad-nacional-de-colombia-banner.jpg", // imagen estática o de CDN
     place: "Café Aroma, La Castellana, Bogotá",
     starts_at: "2025-06-06T19:00:00-05:00", // viernes, 6 de junio de 2025, 7:00 PM (hora Colombia)
     ends_at: "2025-06-06T21:00:00-05:00", // hasta las 9:00 PM
@@ -75,7 +75,7 @@ export const sampleEvents = [
     title: "Coffee + Friday Language exchange meeting La Castellana",
     description:
       "Un espacio mensual para practicar idiomas, conocer nuevas personas y compartir un café en La Castellana. ¡Trae tu mejor actitud!",
-    image: "/assets/universidad-nacional-de-colombia-banner.jpg", // imagen estática o de CDN
+    profile_pic: "/assets/universidad-nacional-de-colombia-banner.jpg", // imagen estática o de CDN
     place: "Café Aroma, La Castellana, Bogotá",
     starts_at: "2025-06-06T19:00:00-05:00", // viernes, 6 de junio de 2025, 7:00 PM (hora Colombia)
     ends_at: "2025-06-06T21:00:00-05:00", // hasta las 9:00 PM

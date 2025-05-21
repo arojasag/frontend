@@ -7,7 +7,7 @@ interface EventCardProps {
     id: number;
     title: string;
     description: string;
-    image: string;
+    profile_pic: string;
     place: string;
     starts_at: string;
     ends_at: string;
@@ -33,7 +33,7 @@ export default function EventCard({ event }: EventCardProps) {
     >
       <div className="relative">
         <Image
-          src={event.image}
+          src={event.profile_pic}
           alt={event.title}
           width={500}
           height={240}

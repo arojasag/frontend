@@ -6,7 +6,7 @@ interface EventsGridProps {
     id: number;
     title: string;
     description: string;
-    image: string;
+    profile_pic: string;
     place: string;
     starts_at: string;
     ends_at: string;
