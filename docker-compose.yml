@@ -3,7 +3,7 @@ services:
     build:
       context: .
       args:
-        MODE: ${mu_fe_MODE:-prod}
+        mode: ${mu_fe_MODE:-prod}
 
     hostname: ${mu_fe_HOSTNAME:-mu_fe}
 
