@@ -5,6 +5,8 @@ services:
       args:
         mode: ${mu_fe_MODE:-prod}
 
+    container_name: ${mu_fe_HOSTNAME:-mu_fe}
+
     hostname: ${mu_fe_HOSTNAME:-mu_fe}
 
     environment:
