@@ -40,14 +40,17 @@ export const callGraphqlAPI = async<T> (
         let errors = "Unknown GraphQL Call Error";
         
         if (error instanceof ApolloError) {
-            if (error.networkError)         {errors = error.networkError.message}
+            if (error.networkError)         {
+                errors = `Network Error: ${error.networkError.message}, ${error.networkError.cause as string}`                                
+            }
             else if (error.graphQLErrors) {
-                error.graphQLErrors.forEach (err => errors.concat(`; ${err.message}`));
+                errors = "GraphQL request done, but request had errors: ";
+                error.graphQLErrors.forEach (err => errors.concat(`; ${err.message}`));                
             }
         }
         else if (error instanceof Error)    {errors = error.message}
                 
-        console.error("GraphQL Operation Mistake:", errors);
+        console.error("Error with GraphQL API:", errors);
         throw new Error(errors);
 
     }
