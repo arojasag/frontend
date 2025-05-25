@@ -7,11 +7,11 @@ import { api } from "~/trpc/react";
 
 const Todos = () => {
         
-    const [todoID, setTodoID] = useState("");
+    const [todoUserName, setTodoUserName] = useState("");
     const [todoText, setTodoText] = useState("");    
     
     const inputs = [
-        {label: "ID", labelId: "id", placeholder: "UserID", onChange: setTodoID},
+        {label: "ID", labelId: "id", placeholder: "UserID", onChange: setTodoUserName},
         {label: "TODO", labelId: "todo", placeholder: "TODO", onChange: setTodoText},
     ];
 
@@ -31,9 +31,9 @@ const Todos = () => {
 
     const sendMutations = async () => {
         try {
-        const response = await mutation.mutateAsync({ text: todoText, userId: todoID });
+        const response = await mutation.mutateAsync({ text: todoText, userName: todoUserName });
         console.log(response.errors);
-        setTodoID(""); setTodoText("");
+        setTodoUserName(""); setTodoText("");
         } catch (error) { alert(error) }
     };            
 
@@ -72,9 +72,8 @@ const Todos = () => {
                 <div className="grid grid-cols-2 place-items-center w-[80%] p-10 gap-10 border-2 border-black bg-orange-100">
                     {todos?.map(todo => (
                         <div key={todo.id} className="self-center border-2 border-black bg-white w-full p-2">
-                            <p className="font-semibold">{todo.text}</p>
-                            <p>{todo.id}</p>                    
-                            <p>{todo.user.id}</p>
+                            <p className="font-semibold">{todo.text}</p>                                                
+                            <p>{todo.user.name}</p>
                         </div>
                     ))}
                 </div>              

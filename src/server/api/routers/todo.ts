@@ -13,6 +13,7 @@ export interface Todo {
     text: string,
     user: {
         id: string
+        name: string
     }
 }
 
@@ -30,7 +31,7 @@ export const todoRouter = createTRPCRouter({
     createTodo: publicProcedure
         .input(z.object({
             text: z.string(),
-            userId: z.string()
+            userName: z.string()
         }))
         .mutation(async({ input }) => {
             const response = await callGraphqlAPI(
@@ -38,7 +39,7 @@ export const todoRouter = createTRPCRouter({
                 true,
                 { 
                     text: input.text,
-                    userId: input.userId
+                    name: input.userName
                 }
             );
             return response;
