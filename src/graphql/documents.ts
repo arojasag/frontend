@@ -12,6 +12,7 @@ export const GET_TODOS = gql`
       text
       user {
         id
+        name
       }
     }
   }
@@ -19,10 +20,10 @@ export const GET_TODOS = gql`
 
 /** Create a new TODO */
 export const CREATE_TODO = gql`
-  mutation CreateTodo($text: String!, $userId: String!) {
-    createTodo(input: { text: $text, userId: $userId }) {
-      id
+  mutation CreateTodo($text: String!, $name: String!) {
+    createTodo(input: { text: $text, name: $name }) {
       text
+      id      
     }
   }
 `;
