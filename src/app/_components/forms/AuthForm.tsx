@@ -1,15 +1,16 @@
 "use client";
 
-import type { ZodType } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import type {
-  DefaultValues,
-  FieldValues,
-  Path,
-  SubmitHandler,
-  UseFormReturn,
+import {
+  type DefaultValues,
+  type FieldValues,
+  type Path,
+  type SubmitHandler,
+  type UseFormReturn,
+  useForm,
 } from "react-hook-form";
+import type { ZodType } from "zod";
+
 import { Button } from "~/app/_components/ui/button";
 import {
   Form,
@@ -20,10 +21,13 @@ import {
   FormMessage,
 } from "~/app/_components/ui/form";
 import { Input } from "~/app/_components/ui/input";
-import { useEffect, useState } from "react";
-import Image from "next/image";
+// import { toast } from "sonner";
+// import Image from "next/image";
 import Link from "next/link";
 import { FIELD_NAMES, FIELD_TYPES, FIELD_PLACEHOLDERS } from "~/constants";
+import { useRouter } from "next/navigation";
+
+import { useEffect, useState } from "react";
 
 interface Props<T extends FieldValues> {
   schema: ZodType<T>;
@@ -36,10 +40,13 @@ const AuthForm = <T extends FieldValues>({
   type,
   schema,
   defaultValues,
+  // onSubmit, // Uncomment if you want to use onSubmit prop
 }: Props<T>) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  // const [isLoading, setIsLoading] = useState(false);
+  // const [errorMessage, setErrorMessage] = useState("");
   const [next, setNext] = useState<string | null>(null);
+
+  const router = useRouter();
   const isSignIn = type === "SIGN_IN";
 
   useEffect(() => {
@@ -54,6 +61,23 @@ const AuthForm = <T extends FieldValues>({
 
   const handleSubmit: SubmitHandler<T> = async (data) => {
     console.log("values", data);
+    // const result = await onSubmit(data);
+
+    // if (result.success) {
+    //   toast.success(
+    //     `Usuario ${isSignIn ? "iniciado sesión" : "registrado"} exitosamente!`,
+    //     {
+    //       duration: 3000,
+    //     }
+    // );
+
+    router.push(next ?? "/feed");
+    // } else {
+    //   toast.error(`Error: ${result.error}`, {
+    //     duration: 3000,
+    //   });
+    //   // setErrorMessage(result.error);
+    // }
   };
 
   return (
@@ -110,10 +134,10 @@ const AuthForm = <T extends FieldValues>({
           <Button
             type="submit"
             className="form-submit-button"
-            disabled={isLoading}
+            // disabled={isLoading}
           >
             {isSignIn ? "Ingresar" : "Registrarse"}
-            {isLoading && (
+            {/* {isLoading && (
               <Image
                 src="/assets/icons/loader.svg"
                 alt="loader"
@@ -121,17 +145,8 @@ const AuthForm = <T extends FieldValues>({
                 height={24}
                 className="ml-2 animate-spin"
               />
-            )}
+            )} */}
           </Button>
-          {errorMessage && <p className="error-message">*{errorMessage}</p>}
-
-          <div className="flex w-full items-center">
-            <div className="flex-grow border-t border-neutral-300" />
-            <span className="body-2 mx-4 text-neutral-900">O</span>
-            <div className="flex-grow border-t border-neutral-300" />
-          </div>
-
-          <div className="flex justify-center space-x-12">google</div>
 
           <div className="body-2 mt-4 flex justify-center">
             <p className="text-light-100">

@@ -1,8 +1,15 @@
-import React from "react";
+import { type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { Toaster } from "../_components/ui/sonner";
+// import { auth } from "~/lib/auth";
 
-const Layout = ({ children }: { children: React.ReactNode }) => {
+const Layout = ({ children }: { children: ReactNode }) => {
+  // const session = auth();
+  // if (session) {
+  //   return <Redirect to="/feed" />;
+  // }
+
   return (
     <div className="flex min-h-screen">
       <section className="fixed hidden h-full w-1/2 justify-center bg-[#141e3a] p-10 lg:flex xl:w-2/5">
@@ -49,6 +56,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         </div>
 
         {children}
+        <Toaster />
       </section>
     </div>
   );
