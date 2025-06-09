@@ -159,6 +159,14 @@
   li {
     @apply text-light-100;
   }
+  .no-scrollbar::-webkit-scrollbar {
+  display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;     /* Firefox */
+  } 
 }
 
 @layer components {
@@ -366,6 +374,16 @@
     @apply !text-[16px] !leading-[24px] !font-normal !text-[#cdd3db];
   }
 }
+
+@layer utilities {
+  .scroll-snap-x {
+    scroll-snap-type: x mandatory;
+  }
+  .scroll-snap-start {
+    scroll-snap-align: start;
+  }
+}
+
 
 @utility dark-gradient {
   @apply bg-gradient-to-b from-[#1A1C20] to-[#08090D];

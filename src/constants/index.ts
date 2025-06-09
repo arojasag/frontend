@@ -1,3 +1,20 @@
+// Import icons from your icon library (e.g., lucide-react)
+import {
+  Sparkles,
+  UsersRound,
+  Pizza,
+  Origami,
+  Volleyball,
+  Plane,
+  BriefcaseBusiness,
+  Computer,
+  Earth,
+  Gamepad2,
+  BoomBox,
+  HeartCrack,
+  Music2,
+} from "lucide-react";
+
 export const footerLinks = [
   {
     title: "Compañía",
@@ -41,7 +58,7 @@ export const sampleEvents = [
     id: 1,
     title: "Coffee + Friday Language exchange meeting La Castellana",
     description:
-      "Un espacio mensual para practicar idiomas, conocer nuevas personas y compartir un café en La Castellana. ¡Trae tu mejor actitud!",
+      "Un espacio mensual para practicar idiomas, conocer nuevas personas y compartir un café en La Castellana. ¡Trae tu mejor actitud!, Un espacio mensual para practicar idiomas, conocer nuevas personas y compartir un café en La Castellana. ¡Trae tu mejor actitud!Un espacio mensual para practicar idiomas, conocer nuevas personas y compartir un café en La Castellana. ¡Trae tu mejor actitud!Un espacio mensual para practicar idiomas, conocer nuevas personas y compartir un café en La Castellana. ¡Trae tu mejor actitud!Un espacio mensual para practicar idiomas, conocer nuevas personas y compartir un café en La Castellana. ¡Trae tu mejor actitud!Un espacio mensual para practicar idiomas, conocer nuevas personas y compartir un café en La Castellana. ¡Trae tu mejor actitud!Un espacio mensual para practicar idiomas, conocer nuevas personas y compartir un café en La Castellana. ¡Trae tu mejor actitud!Un espacio mensual para practicar idiomas, conocer nuevas personas y compartir un café en La Castellana. ¡Trae tu mejor actitud!Un espacio mensual para practicar idiomas, conocer nuevas personas y compartir un café en La Castellana. ¡Trae tu mejor actitud!",
     profile_pic: "/assets/universidad-nacional-de-colombia-banner.jpg", // imagen estática o de CDN
     place: "Café Aroma, La Castellana, Bogotá",
     starts_at: "2025-06-06T19:00:00-05:00", // viernes, 6 de junio de 2025, 7:00 PM (hora Colombia)
@@ -81,6 +98,49 @@ export const sampleEvents = [
     ends_at: "2025-06-06T21:00:00-05:00", // hasta las 9:00 PM
     capacity: 30,
   },
+  {
+    id: 5,
+    title: "Coffee + Friday Language exchange meeting La Castellana",
+    description:
+      "Un espacio mensual para practicar idiomas, conocer nuevas personas y compartir un café en La Castellana. ¡Trae tu mejor actitud!",
+    profile_pic: "/assets/universidad-nacional-de-colombia-banner.jpg", // imagen estática o de CDN
+    place: "Café Aroma, La Castellana, Bogotá",
+    starts_at: "2025-06-06T19:00:00-05:00", // viernes, 6 de junio de 2025, 7:00 PM (hora Colombia)
+    ends_at: "2025-06-06T21:00:00-05:00", // hasta las 9:00 PM
+    capacity: 30,
+  },
+  {
+    id: 6,
+    title: "Coffee + Friday Language exchange meeting La Castellana",
+    description:
+      "Un espacio mensual para practicar idiomas, conocer nuevas personas y compartir un café en La Castellana. ¡Trae tu mejor actitud!",
+    profile_pic: "/assets/universidad-nacional-de-colombia-banner.jpg", // imagen estática o de CDN
+    place: "Café Aroma, La Castellana, Bogotá",
+    starts_at: "2025-06-06T19:00:00-05:00", // viernes, 6 de junio de 2025, 7:00 PM (hora Colombia)
+    ends_at: "2025-06-06T21:00:00-05:00", // hasta las 9:00 PM
+    capacity: 30,
+  },
+];
+
+export const featuredEvents = [
+  {
+    id: 1,
+    title: "Fiesta Universitaria de Bienvenida",
+    description: "Ven y conoce nuevos amigos este viernes!",
+    imageUrl: "/assets/ilustracion-de-la-ciudad-del-anime.jpg",
+  },
+  {
+    id: 2,
+    title: "Taller de Emprendimiento Universitario",
+    description: "Descubre cómo empezar tu proyecto con éxito.",
+    imageUrl: "/assets/fondo-de-arte-digital-de-japon (1).jpg",
+  },
+  {
+    id: 3,
+    title: "Noche Cultural Internacional",
+    description: "Disfruta comida y música de diferentes países.",
+    imageUrl: "/assets/fondo-de-arte-digital-de-japon.jpg",
+  },
 ];
 
 export const sampleGroups = [
@@ -112,4 +172,80 @@ export const sampleGroups = [
     isOpen: false,
   },
   // ...otros grupos
+];
+
+export const samplecategories = [
+  { id: 1, name: "Todos", icon: Sparkles, href: "/search?category=todos" },
+  {
+    id: 2,
+    name: "Nuevos Eventos",
+    icon: UsersRound,
+    href: "/search?category=nuevos-eventos",
+  },
+  {
+    id: 3,
+    name: "Actividades sociales",
+    icon: Pizza,
+    href: "/search?category=actividades-sociales",
+  },
+  {
+    id: 4,
+    name: "Aficiones",
+    icon: Origami,
+    href: "/search?category=aficiones",
+  },
+  {
+    id: 5,
+    name: "Deportes",
+    icon: Volleyball,
+    href: "/search?category=deportes",
+  },
+  {
+    id: 6,
+    name: "Viajes",
+    icon: Plane,
+    href: "/search?category=viajes",
+  },
+  {
+    id: 7,
+    name: "Negocios",
+    icon: BriefcaseBusiness,
+    href: "/search?category=negocios",
+  },
+  {
+    id: 8,
+    name: "Tecnología",
+    icon: Computer,
+    href: "/search?category=tecnologia",
+  },
+  {
+    id: 9,
+    name: "Comunidad",
+    icon: Earth,
+    href: "/search?category=comunidad",
+  },
+  {
+    id: 10,
+    name: "Juegos",
+    icon: Gamepad2,
+    href: "/search?category=juegos",
+  },
+  {
+    id: 11,
+    name: "Baile",
+    icon: BoomBox,
+    href: "/search?category=baile",
+  },
+  {
+    id: 12,
+    name: "Apoyo",
+    icon: HeartCrack,
+    href: "/search?category=apoyo",
+  },
+  {
+    id: 13,
+    name: "Música",
+    icon: Music2,
+    href: "/search?category=musica",
+  },
 ];
