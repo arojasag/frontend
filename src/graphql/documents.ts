@@ -27,3 +27,22 @@ export const CREATE_TODO = gql`
     }
   }
 `;
+
+/** Get Groups */
+export const GET_GROUPS = gql `
+  query fetchGroups {
+    groups {
+      id
+      name
+      description
+      profilePic {
+        data
+        mimeType
+      }
+      isVerified
+      isOpen
+      createdAt
+      updatedAt
+    }
+  }
+`;
