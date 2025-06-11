@@ -13,7 +13,7 @@ import {
 
 const Header = () => {
   return (
-    <nav className="header border-gray sticky border-b">
+    <nav className="header sticky border-b">
       <Link href="/feed">
         <Image src="/assets/meetUN.svg" width={150} height={100} alt="Logo" />
       </Link>
@@ -89,9 +89,9 @@ const Header = () => {
               <Link href="/my-events">Mis eventos</Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild className="cursor-pointer">
-              <Link href="">Mi Perfil</Link>
-            </DropdownMenuItem>
+            {/* <DropdownMenuItem asChild className="cursor-pointer">
+              <Link href="/members/1">Mi Perfil</Link>
+            </DropdownMenuItem> */}
             <DropdownMenuItem
               asChild
               className="mt-1 w-full cursor-pointer text-[#e32424]"

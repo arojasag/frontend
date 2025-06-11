@@ -32,7 +32,7 @@ const GroupEditPage = async ({
     return (
       <div className="mx-auto max-w-6xl px-4 py-6">Grupo no encontrado</div>
     );
-  if (group.id !== id)
+  if (String(group.id) !== String(id))
     return (
       <div className="mx-auto max-w-6xl px-4 py-6">Grupo no encontrado</div>
     );
