@@ -17,14 +17,14 @@ export default function GroupCard({ group }: GroupCardProps) {
   return (
     <Link
       href={`/groups/${group.id}`}
-      className="flex h-52 flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm transition hover:shadow-md sm:flex-row"
+      className="flex h-52 flex-col overflow-hidden rounded-2xl bg-white transition hover:shadow-md sm:flex-row"
     >
       <div className="relative h-48 w-full sm:h-full sm:w-[45%]">
         <Image
           src={group.profile_pic}
           alt={group.name}
           fill
-          className="object-cover"
+          className="rounded-2xl object-cover"
         />
         {!group.isOpen && (
           <span className="absolute top-2 left-2 flex items-center gap-1 rounded-full bg-white px-2 py-1 text-xs font-medium text-gray-700 shadow">
