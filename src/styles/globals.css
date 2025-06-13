@@ -159,6 +159,14 @@
   li {
     @apply text-light-100;
   }
+  .no-scrollbar::-webkit-scrollbar {
+  display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;     /* Firefox */
+  } 
 }
 
 @layer components {
@@ -337,8 +345,12 @@
   .shad-submit-btn {
     @apply bg-brand button hover:bg-brand-100 transition-all rounded-full !important;
   } */
-
-
+  .shad-alert-dialog-title {
+    @apply text-[24px] !leading-[32px] !font-semibold !text-light-100;
+  }
+  .header {
+    @apply !flex !justify-between !items-center !max-h-16 !py-2 !px-5 lg:!px-14 !gap-4 !top-0 !z-50 !bg-white;
+  }
 
   .text-hero {
     @apply text-[64px] leading-[76px] font-semibold;
@@ -362,6 +374,16 @@
     @apply !text-[16px] !leading-[24px] !font-normal !text-[#cdd3db];
   }
 }
+
+@layer utilities {
+  .scroll-snap-x {
+    scroll-snap-type: x mandatory;
+  }
+  .scroll-snap-start {
+    scroll-snap-align: start;
+  }
+}
+
 
 @utility dark-gradient {
   @apply bg-gradient-to-b from-[#1A1C20] to-[#08090D];

@@ -1,8 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { footerLinks } from "~/constants";
-// import { FaInstagram, FaLinkedinIn } from "react-icons/fa";
-// import { FaXTwitter, FaThreads } from "react-icons/fa6";
 
 type ColumnProps = {
   title: string;

@@ -4,7 +4,7 @@ import Link from "next/link";
 const Hero = () => {
   return (
     <section className="mx-auto flex h-[85vh] max-w-[1440px] flex-col items-center justify-center gap-8 px-6 py-10 md:flex-row md:gap-10 lg:gap-16">
-      {/* Lado izquierdo: Texto y CTA */}
+      {/* Left Side: Text and Button */}
       <div className="flex max-w-xl flex-1 flex-col justify-center text-left">
         <h1 className="h2 leading-tight font-bold text-[#4D4D4D] lg:text-[38px]">
           La plataforma de los estudiantes: donde los intereses se convierten en
@@ -25,7 +25,7 @@ const Hero = () => {
         </div>
       </div>
 
-      {/* Lado derecho: Imagen */}
+      {/* Right Side: Image */}
       <div className="flex max-w-xl flex-1 items-center justify-center transition-transform hover:scale-105">
         <div className="relative h-64 w-full min-w-[300px] sm:h-80 md:h-96 lg:h-[500px]">
           <Image

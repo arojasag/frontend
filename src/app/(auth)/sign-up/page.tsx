@@ -1,7 +1,9 @@
 "use client";
+
 import React from "react";
 import AuthForm from "~/app/_components/forms/AuthForm";
 import { signUpSchema } from "~/lib/validations";
+// import { trpc } from "~/trpc/client";
 
 const SignUp = () => (
   <AuthForm
