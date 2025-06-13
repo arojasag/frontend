@@ -1,15 +1,30 @@
+/* eslint-disable @next/next/no-img-element */
 /**This route is used for tRPC testing purposes */
 
 "use client"
 
-import { useState, type SetStateAction } from "react";
+import { useState, useReducer, type SetStateAction } from "react";
 import { api } from "~/trpc/react";
+
+interface GroupToCreate {
+    name?: string
+    description?: string
+    profilePic?: string
+    isOpen?: boolean
+};
+
+type GroupAction = "name" | "description" | "profilePic" | "isOpen";
+
+interface ChangeGroupState {
+    action: GroupAction
+    newValue: string | boolean
+}
 
 const Todos = () => {
         
     const [todoUserName, setTodoUserName] = useState("");
-    const [todoText, setTodoText] = useState("");        
-    
+    const [todoText, setTodoText] = useState("");
+
     const inputs = [
         {label: "ID", labelId: "id", placeholder: "UserID", onChange: setTodoUserName},
         {label: "TODO", labelId: "todo", placeholder: "TODO", onChange: setTodoText},
@@ -23,16 +38,6 @@ const Todos = () => {
             await utils.todos.getTodo.refetch();            
         }
     });
-
-    // const { data, error, isLoading } = api.todos.getTodo.useQuery(undefined, {
-    //     refetchOnWindowFocus: true,
-    //     refetchOnReconnect: true,
-    // });
-
-    // const { data, error, isLoading} as {groupsData, groupsError, groupsIsLoading} = api.groups.getGroups.useQuery(undefined, {
-    //     refetchOnWindowFocus: true,
-    //     refetchOnReconnect: true,        
-    // })
 
     const { data: todosData, error: todosError, isLoading: todosIsLoading } = api.todos.getTodo.useQuery(undefined, {
     refetchOnWindowFocus: true,
@@ -58,7 +63,7 @@ const Todos = () => {
     return (
         <main className="flex flex-col items-center w-full min-h-[100vh] bg-[#111111] p-5 gap-5 text-white">
             <h1 className="text-3xl font-semibold text-white">Hola. Testing de tRPC</h1>
-            <div className="flex flex-row items-center justify-center w-full gap-10">
+            <div className="flex flex-row justify-center w-full gap-10">
                 <section className="flex flex-col items-center w-[40%] gap-10 border-2 rounded-md border-black p-2 py-10 bg-[#222222]">
                     {todosIsLoading  && <h1>{"Cargando TODOs"}</h1>}
                     {todosError      && <h1 className="text-red text-bold">{"Error fetching TODOs"}</h1> }
@@ -100,24 +105,29 @@ const Todos = () => {
                     )}         
                 </section>
                 <section className="flex flex-col items-center justify-center flex-1 border-2 bg-[#222222] h-[100%] p-2 py-10 rounded-md border-2 border-black gap-5 p-5 py-10">
-                    <h2>Grupos</h2>
-                    <h3>Crea un Grupo</h3>
-                    <h3>Lista de Grupos</h3>
-                    <div className="grid grid-cols-2 w-full gap-5">
-                        {groups.map(grp => {
-                                return (
-                                    <div
-                                        key={grp.id}
-                                        className="flex flex-col items-center justify-center rounded-md border-2 border-black bg-[#333333] p-5 gap-3"
-                                    >
-                                        <h4 className="font-semibold text-xl">{grp.name}</h4>
-                                        <p className="text-white">{grp.description}</p>
-                                        <img src={`data:image/jpeg;base64,${grp.profilePic.data}`} alt={`${grp.name} pic`} />
-                                    </div>)
-                            })
-                        }
-                    </div>
-
+                    {groupsIsLoading  && <h1>{"Cargando Grupos"}</h1>}
+                    {groupsError      && <h1 className="text-red text-bold">{"Error consultando Grupos"}</h1> }                    
+                    {!groupsIsLoading && !groupsError && (
+                        <>
+                            <h2>Grupos</h2>                    
+                            <CreateGroupComponent/>
+                            <h3>Lista de Grupos</h3>
+                            <div className="grid grid-cols-2 w-full gap-5">
+                                {groups.map(grp => {
+                                        return (
+                                            <div
+                                                key={grp.id}
+                                                className="flex flex-col items-center justify-center rounded-md border-2 border-black bg-[#333333] p-5 gap-3"
+                                            >
+                                                <h4 className="font-semibold text-xl">{grp.name}</h4>
+                                                <p className="text-white">{grp.description}</p>
+                                                <img src={`data:image/jpeg;base64,${grp.profilePic.data}`} alt={`${grp.name} pic`} />
+                                            </div>)
+                                    })
+                                }
+                            </div>                        
+                        </>
+                    )}
 
                 </section>
             </div>
@@ -146,5 +156,108 @@ const InputTODO = (props: inputTODOProps) => {
         </li>      
     )
 }
+
+const CreateGroupComponent = () => {
+    
+    const groupReducer = (state: GroupToCreate, action: ChangeGroupState) => {
+        switch (action.action) {
+            case "name":        return {...state, name: action.newValue as string};                
+            case "description": return {...state, description: action.newValue as string};
+            case "profilePic":  return {...state, profilePic: action.newValue as string};
+            case "isOpen":      return {...state, isOpen: action.newValue as boolean}
+        }
+    };
+
+    const [groupState, groupsDispatch] = useReducer(groupReducer, {
+        name: "",
+        description: "",
+        profilePic: "",
+        isOpen: true
+    });    
+    
+    const groupInputs: {label: string, labelId: string, placeholder: string, type: string, action: GroupAction, width: string}[] = [
+        {label: "Nombre", labelId: "name", placeholder: "Grupo", type: "text", action: "name", width: "w-[40%]"},
+        {label: "Descripción", labelId: "description", placeholder: "Descripción", type: "text", action: "description", width: "w-[40%]"},        
+    ]    
+    
+    return (
+        <form className="flex flex-col items-center justify-center w-[85%] border-2 border-black rounded-md bg-[#333333] gap-5 p-5">
+            <h3>Crea un Grupo</h3>                                                
+            <div className="flex flex-row items-center justify-center rounded-md w-[85%] gap-2 py-2">
+                {groupInputs.map(grp => {
+                    return (
+                    <div className="flex flex-col w-[40%] p-2 gap-2 rounded-md" key={grp.labelId}>
+                        <label htmlFor={grp.labelId} className="font-semibold">
+                            {grp.label}
+                        </label>
+                        <input                                        
+                            id={grp.labelId}
+                            type={grp.type}
+                            placeholder={grp.placeholder}
+                            className="text-white border-2 border-white rounded-md pl-3 py-1 w-[95%]"                                                
+                            onChange={(e) => {
+                                groupsDispatch({
+                                action: grp.action,
+                                newValue: e.target.value  
+                                });
+                            }}
+                        />                                    
+                    </div>
+                    )
+                })}                        
+                <div className="flex flex-col items-center justify-center flex-1 h-[100%] gap-2">
+                    <label htmlFor="isOpen" className="font-semibold">{"¿Abierto?"}</label>
+                    <input 
+                    type="checkbox" 
+                    id="isOpen"
+                    onChange={e =>  {                                        
+                        groupsDispatch({
+                            action: "isOpen",
+                            newValue: e.target.checked
+                        })
+                    }}
+                    />
+                </div>                
+            </div>
+            <div className="flex flex-col items-center justify-center gap-4">
+                {(groupState.profilePic) ? <img src={groupState.profilePic} alt="Imagen Seleccionada" className="w-[60%]"/> : <span id="file-name" className="ml-2 text-gray-500">{"Ningún archivo seleccionado"}</span>}                
+                <label htmlFor="profilePic" className="font-semibold cursor-pointer bg-blue-700 px-4 py-2 rounded-md mb-2">
+                    {"Seleccionar Foto del grupo"}
+                </label>                
+                <input 
+                    type="file"
+                    accept="image/jpeg"
+                    className="hidden"
+                    id="profilePic"
+                    onChange={(e) => {
+                        const file = e.target.files ? e.target.files[0] : null;
+                        if (file) {
+                            // Convertir a Base64
+                            const reader = new FileReader();
+                            reader.onload = (event) => {
+                                if(event.target) {
+                                    groupsDispatch({
+                                        action: "profilePic",
+                                        newValue: event.target.result as string // Base64
+                                    });
+                                }
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    }}
+                />      
+            </div>          
+            <button 
+                className="bg-blue-500 text-white rounded-md px-5 py-2 hover:cursor-pointer hover:bg-blue-700" 
+                type="button"
+                onClick={() => {                    
+                    console.log(groupState)
+                }}
+            >
+                {"Crear"}
+            </button>            
+        </form>    
+    );
+};
 
 export default Todos;
