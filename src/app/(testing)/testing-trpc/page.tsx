@@ -6,20 +6,6 @@
 import { useState, useReducer, type SetStateAction } from "react";
 import { api } from "~/trpc/react";
 
-interface GroupToCreate {
-    name?: string
-    description?: string
-    profilePic?: string
-    isOpen?: boolean
-};
-
-type GroupAction = "name" | "description" | "profilePic" | "isOpen";
-
-interface ChangeGroupState {
-    action: GroupAction
-    newValue: string | boolean
-}
-
 const Todos = () => {
         
     const [todoUserName, setTodoUserName] = useState("");
@@ -28,7 +14,7 @@ const Todos = () => {
     const inputs = [
         {label: "ID", labelId: "id", placeholder: "UserID", onChange: setTodoUserName},
         {label: "TODO", labelId: "todo", placeholder: "TODO", onChange: setTodoText},
-    ];
+    ];    
 
     const utils = api.useUtils();
 
@@ -114,15 +100,15 @@ const Todos = () => {
                             <h3>Lista de Grupos</h3>
                             <div className="grid grid-cols-2 w-full gap-5">
                                 {groups.map(grp => {
-                                        return (
-                                            <div
-                                                key={grp.id}
-                                                className="flex flex-col items-center justify-center rounded-md border-2 border-black bg-[#333333] p-5 gap-3"
-                                            >
-                                                <h4 className="font-semibold text-xl">{grp.name}</h4>
-                                                <p className="text-white">{grp.description}</p>
-                                                <img src={`data:image/jpeg;base64,${grp.profilePic.data}`} alt={`${grp.name} pic`} />
-                                            </div>)
+                                    return (
+                                        <div
+                                            key={grp.id}
+                                            className="flex flex-col items-center justify-center rounded-md border-2 border-black bg-[#333333] p-5 gap-3"
+                                        >
+                                            <h4 className="font-semibold text-xl">{grp.name}</h4>
+                                            <p className="text-white">{grp.description}</p>
+                                            <img src={`data:image/${grp.profilePic.mimeType};base64,${grp.profilePic.data}`} alt={`${grp.name} pic`} />
+                                        </div>)
                                     })
                                 }
                             </div>                        
@@ -157,6 +143,21 @@ const InputTODO = (props: inputTODOProps) => {
     )
 }
 
+interface GroupToCreate {
+    name?: string
+    description?: string
+    profilePic?: string
+    isOpen?: boolean
+};
+
+type GroupAction = "name" | "description" | "profilePic" | "isOpen" | "reset";
+
+interface ChangeGroupState {
+    action: GroupAction
+    newValue: string | boolean
+}
+
+
 const CreateGroupComponent = () => {
     
     const groupReducer = (state: GroupToCreate, action: ChangeGroupState) => {
@@ -165,15 +166,54 @@ const CreateGroupComponent = () => {
             case "description": return {...state, description: action.newValue as string};
             case "profilePic":  return {...state, profilePic: action.newValue as string};
             case "isOpen":      return {...state, isOpen: action.newValue as boolean}
+            case "reset":       return {name: "", description: "", profilePic: "", isOpen: true}
         }
-    };
-
+    };    
+    
     const [groupState, groupsDispatch] = useReducer(groupReducer, {
         name: "",
         description: "",
         profilePic: "",
         isOpen: true
+    });
+
+    const utils = api.useUtils();
+    
+    const mutation = api.groups.createGroup.useMutation({
+        onSuccess: async () => {            
+            await utils.todos.getTodo.invalidate();            
+            await utils.todos.getTodo.refetch();            
+        }
     });    
+    
+    const sendMutations = async () => {
+        try {            
+            console.log(groupState);
+            if(!groupState.name || groupState.name === "") {
+                alert ("Nombre no dado");
+                return;
+            }
+            if(!groupState.isOpen) {
+                alert ("isOpen not provided");
+                return;                
+            }
+            const response = await mutation.mutateAsync({
+                name: groupState.name,
+                description: groupState.description,
+                profilePic: groupState.profilePic ? groupState.profilePic.split(",")[1] : groupState.profilePic,
+                isOpen: groupState.isOpen,
+            });
+
+            if(response) {
+                groupsDispatch({action: "reset", newValue: ""});
+                console.log(response);
+            }
+            else alert("Algo salió mal");
+
+        } catch (e) {
+            alert(e)
+        }
+    };
     
     const groupInputs: {label: string, labelId: string, placeholder: string, type: string, action: GroupAction, width: string}[] = [
         {label: "Nombre", labelId: "name", placeholder: "Grupo", type: "text", action: "name", width: "w-[40%]"},
@@ -231,8 +271,7 @@ const CreateGroupComponent = () => {
                     id="profilePic"
                     onChange={(e) => {
                         const file = e.target.files ? e.target.files[0] : null;
-                        if (file) {
-                            // Convertir a Base64
+                        if (file) {                            
                             const reader = new FileReader();
                             reader.onload = (event) => {
                                 if(event.target) {
@@ -250,9 +289,7 @@ const CreateGroupComponent = () => {
             <button 
                 className="bg-blue-500 text-white rounded-md px-5 py-2 hover:cursor-pointer hover:bg-blue-700" 
                 type="button"
-                onClick={() => {                    
-                    console.log(groupState)
-                }}
+                onClick={async () => await sendMutations()}
             >
                 {"Crear"}
             </button>            

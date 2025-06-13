@@ -46,3 +46,17 @@ export const GET_GROUPS = gql `
     }
   }
 `;
+
+export const CREATE_GROUP = gql`
+  mutation CreateGroup($input: NewGroup!) {
+    createGroup(input: $input) {
+      id
+      name
+      description
+      isVerified
+      isOpen
+      createdAt
+      updatedAt
+    }
+  }
+`;
