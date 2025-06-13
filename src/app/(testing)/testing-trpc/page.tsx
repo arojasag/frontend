@@ -43,8 +43,8 @@ const Todos = () => {
         } catch (error) { alert(error) }
     };                
     
-    const todos = todosData?.todos?.todos ?? [];
-    const groups = groupsData?.groups?.groups ?? [];
+    const todos = todosData?.todos?.todos ?? [];    
+    const groups = groupsData?.groups ?? [];
 
     return (
         <main className="flex flex-col items-center w-full min-h-[100vh] bg-[#111111] p-5 gap-5 text-white">
