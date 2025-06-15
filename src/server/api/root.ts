@@ -1,4 +1,3 @@
-import { postRouter } from "~/server/api/routers/post";
 import { todoRouter } from "~/server/api/routers/todo";
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 import { groupRouter } from "./routers/group";
@@ -8,8 +7,7 @@ import { groupRouter } from "./routers/group";
  *
  * All routers added in /api/routers should be manually added here.
  */
-export const appRouter = createTRPCRouter({
-  post: postRouter,
+export const appRouter = createTRPCRouter({  
   todos: todoRouter,
   groups: groupRouter,
 });
