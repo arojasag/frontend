@@ -2,12 +2,12 @@ import GroupCard from "~/app/_components/feedPage/GroupCard";
 
 interface GroupsGridProps {
   groups: {
-    id: number;
+    id: string;
     name: string;
-    description: string;
-    profile_pic: string;
-    isVerified: boolean;
-    isOpen: boolean;
+    description?: string; // It can be optional
+    profile_pic?: string; // It can be optional
+    isVerified?: boolean; // It can be optional
+    isOpen?: boolean; // It can be optional
   }[];
 }
 

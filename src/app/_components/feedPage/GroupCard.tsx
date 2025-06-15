@@ -4,12 +4,12 @@ import { BadgeCheck, Lock } from "lucide-react";
 
 interface GroupCardProps {
   group: {
-    id: number;
+    id: string;
     name: string;
-    description: string;
-    profile_pic: string;
-    isVerified: boolean;
-    isOpen: boolean;
+    description?: string; // It can be optional
+    profile_pic?: string; // It can be optional
+    isVerified?: boolean; // It can be optional
+    isOpen?: boolean; // It can be optional
   };
 }
 
@@ -21,12 +21,14 @@ export default function GroupCard({ group }: GroupCardProps) {
     >
       <div className="relative h-48 w-full sm:h-full sm:w-[45%]">
         <Image
-          src={group.profile_pic}
+          src={
+            group.profile_pic ?? "/assets/fondo-de-arte-digital-de-japon.jpg"
+          } // Default image if profile_pic is not provided
           alt={group.name}
           fill
           className="rounded-2xl object-cover"
         />
-        {!group.isOpen && (
+        {group.isOpen === false && (
           <span className="absolute top-2 left-2 flex items-center gap-1 rounded-full bg-white px-2 py-1 text-xs font-medium text-gray-700 shadow">
             <Lock className="h-4 w-4" /> Cerrado
           </span>
@@ -43,7 +45,8 @@ export default function GroupCard({ group }: GroupCardProps) {
             )}
           </div>
           <p className="line-clamp-4 text-sm text-gray-600">
-            {group.description}
+            {group.description ?? "Sin descripción disponible"}{" "}
+            {/* Default description if description is not provided */}
           </p>
         </div>
       </div>
