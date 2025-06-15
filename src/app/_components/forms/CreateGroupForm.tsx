@@ -2,17 +2,20 @@
 
 import { useState } from "react";
 import Link from "next/link"; // Importa Link si usas Next.js
-import StepTopics from "./steps/StepTopics";
+// import StepTopics from "./steps/StepTopics";
 import StepName from "./steps/StepName";
 import StepDescription from "./steps/StepDescription";
 import StepPrivacy from "./steps/StepPrivacy";
 import StepImage from "./steps/StepImage";
 import StepReview from "./steps/StepReview";
 
+import { api } from "~/trpc/react";
+import { useRouter } from "next/navigation"; // Import useRouter to navigate
+
 export type CreateGroupFormData = {
   name: string;
   description: string;
-  categories: string[];
+  // categories: string[];
   isOpen: boolean;
   profile_pic: File | null;
 };
@@ -29,7 +32,7 @@ type StepComponentProps = {
 type StepComponent = React.FC<StepComponentProps>;
 
 const steps: StepComponent[] = [
-  StepTopics,
+  // StepTopics,
   StepName,
   StepDescription,
   StepPrivacy,
@@ -42,7 +45,7 @@ export default function CreateGroupForm() {
   const [formData, setFormData] = useState<CreateGroupFormData>({
     name: "",
     description: "",
-    categories: [],
+    // categories: [],
     isOpen: true,
     profile_pic: null,
   });
@@ -52,8 +55,58 @@ export default function CreateGroupForm() {
   const nextStep = () => setStepIndex((s) => Math.min(s + 1, steps.length - 1));
   const prevStep = () => setStepIndex((s) => Math.max(s - 1, 0));
 
+  const router = useRouter(); // To navigate after form submission
+
+  const utils = api.useUtils(); // Use utils to invalidate and refetch queries
+  const mutation = api.groups.createGroup.useMutation({
+    onSuccess: async () => {
+      await utils.groups.getGroups.invalidate();
+      await utils.groups.getGroups.refetch();
+    },
+  });
+
   const handleSubmit = async () => {
-    alert(formData.name);
+    try {
+      if (!formData.name.trim()) {
+        alert("El nombre del grupo es obligatorio.");
+        return;
+      }
+
+      const profilePicBase64 = formData.profile_pic
+        ? await new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            if (formData.profile_pic) {
+              reader.readAsDataURL(formData.profile_pic);
+            } else {
+              reject(new Error("Profile picture is null"));
+            }
+          })
+        : null;
+
+      await mutation.mutateAsync({
+        name: formData.name,
+        description: formData.description,
+        isOpen: formData.isOpen,
+        profilePic: profilePicBase64?.split(",")[1] ?? undefined, // Remove the "data:" prefix
+      });
+
+      alert("Grupo creado exitosamente.");
+      setFormData({
+        name: "",
+        description: "",
+        isOpen: true,
+        profile_pic: null,
+      });
+
+      // Navigate to the search page after successful creation
+      router.push("/search");
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Error desconocido";
+      alert("Error al crear el grupo: " + errorMessage);
+    }
   };
 
   return (

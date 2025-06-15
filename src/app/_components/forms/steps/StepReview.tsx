@@ -28,9 +28,9 @@ export default function StepReview({ data, onBack, onSubmit }: Props) {
             <strong>Descripción:</strong> {data.description}
           </div>
         )}
-        <div>
+        {/* <div>
           <strong>Categorías:</strong> {data.categories.join(", ")}
-        </div>
+        </div> */}
         <div>
           <strong>Privacidad:</strong>{" "}
           {data.isOpen ? "Abierto" : "Solicitud para unirse"}
