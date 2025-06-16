@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { Button } from "../ui/button";
 import {
   Select,
@@ -37,9 +37,9 @@ const categories = [
 
 export default function FilterBar() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const source = searchParams.get("source");
-  const view = source === "groups" ? "groups" : "events";
+  const pathname = usePathname();
+  const isGroupsView = pathname.includes("/search/groups");
+  const view = isGroupsView ? "groups" : "events";
 
   return (
     <section className="sticky top-16 z-40 border-b-2 border-gray-200 bg-white px-8">
@@ -48,7 +48,7 @@ export default function FilterBar() {
         <div className="flex items-center justify-between px-5 py-3">
           <div className="flex space-x-4">
             <button
-              onClick={() => router.push("/search?source=events")}
+              onClick={() => router.push("/search/events")}
               className={`cursor-pointer border-b-3 px-2 pb-1 transition ${
                 view === "events"
                   ? "border-black font-bold text-black"
@@ -58,7 +58,7 @@ export default function FilterBar() {
               Eventos
             </button>
             <button
-              onClick={() => router.push("/search?source=groups")}
+              onClick={() => router.push("/search/groups")}
               className={`cursor-pointer border-b-3 px-2 pb-1 transition ${
                 view === "groups"
                   ? "border-black font-bold text-black"
