@@ -10,7 +10,7 @@ export default function FeedLayout({
   return (
     <>
       <FilterBar />
-      <main className="mx-auto">{children}</main>
+      <main className="mx-auto w-full lg:px-8">{children}</main>
     </>
   );
 }
