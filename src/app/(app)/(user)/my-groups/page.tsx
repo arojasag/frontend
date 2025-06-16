@@ -1,37 +1,35 @@
-import React from "react";
+// app/my-groups/page.tsx
 import Link from "next/link";
 import Image from "next/image";
 import Footer from "~/app/_components/landingPage/Footer";
+// import { getServerAuthSession } from "~/server/auth";
+import { api } from "~/trpc/server";
 
-interface Group {
-  id: number;
-  name: string;
-  image: string;
-}
+export default async function MyGroupsPage() {
+  // const session = await getServerAuthSession();
 
-const memberGroups: Group[] = [
-  {
-    id: 1,
-    name: "Bogotá Meditation Meetup",
-    image: "/assets/universidad-nacional-de-colombia-banner.jpg",
-  },
-  {
-    id: 2,
-    name: "Fútbol Casual Bogotá / Pickup",
-    image: "/assets/fondo-de-arte-digital-de-japon.jpg",
-  },
-];
+  // // Puedes restringir acceso si lo deseas
+  // if (!session) {
+  //   return (
+  //     <main className="p-10 text-center text-xl">
+  //       Debes iniciar sesión para ver tus grupos.
+  //     </main>
+  //   );
+  // }
 
-const creatorGroups: Group[] = [
-  {
-    id: 3,
-    name: "React Developers Bogotá",
-    image: "/assets/fondo-de-arte-digital-de-japon (1).jpg",
-  },
-];
+  const data = await api.groups.getGroups();
+  console.log("Data from getGroups:", data);
 
-const MyGroupsPage = () => {
-  const hasGroups = memberGroups.length > 0 || creatorGroups.length > 0;
+  const groups =
+    data.groups?.map((group) => ({
+      id: group.id,
+      name: group.name,
+      description: group.description || "Sin descripción disponible",
+      profile_pic:
+        group.profilePic?.data || "/assets/fondo-de-arte-digital-de-japon.jpg", // Default image
+      isVerified: group.isVerified ?? false,
+      isOpen: group.isOpen ?? true,
+    })) ?? [];
 
   return (
     <>
@@ -44,67 +42,38 @@ const MyGroupsPage = () => {
         </Link>
         <h1 className="mt-4 text-3xl font-bold">Tus Grupos</h1>
 
-        {!hasGroups && (
+        {groups.length === 0 ? (
           <div className="mt-8 text-lg text-gray-600">
             No estás en ningún grupo.
           </div>
-        )}
-
-        {creatorGroups.length > 0 && (
-          <>
-            <h2 className="mt-6 text-xl font-semibold">Creador</h2>
-            <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {creatorGroups.map((group) => (
-                <Link
-                  href={`/groups/${group.id}`}
-                  key={group.id}
-                  className="overflow-hidden rounded-lg border shadow-sm"
-                >
-                  <Image
-                    src={group.image}
-                    alt={group.name}
-                    width={400}
-                    height={160}
-                    className="h-40 w-full object-cover"
-                  />
-                  <div className="p-4">
-                    <h3 className="text-lg font-semibold">{group.name}</h3>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </>
-        )}
-
-        {memberGroups.length > 0 && (
-          <>
-            <h2 className="mt-6 text-xl font-semibold">Miembro</h2>
-            <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {memberGroups.map((group) => (
-                <Link
-                  href={`/groups/${group.id}`}
-                  key={group.id}
-                  className="overflow-hidden rounded-lg border shadow-sm"
-                >
-                  <Image
-                    src={group.image}
-                    alt={group.name}
-                    width={400}
-                    height={160}
-                    className="h-40 w-full object-cover"
-                  />
-                  <div className="p-4">
-                    <h3 className="text-lg font-semibold">{group.name}</h3>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </>
+        ) : (
+          <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {groups.map((group) => (
+              <Link
+                href={`/groups/${group.id}`}
+                key={group.id}
+                className="overflow-hidden rounded-lg border shadow-sm"
+              >
+                <Image
+                  src={
+                    group.profile_pic
+                      ? `data:image/jpeg;base64,${group.profile_pic}` // Ajusta el tipo de imagen si no es JPEG
+                      : "/assets/fondo-de-arte-digital-de-japon.jpg" // Imagen por defecto
+                  }
+                  alt={group.name || "Group Image"} // Asegúrate de incluir texto alternativo
+                  width={400}
+                  height={300}
+                  className="h-48 w-full object-cover"
+                />
+                <div className="p-4">
+                  <h3 className="text-lg font-semibold">{group.name}</h3>
+                </div>
+              </Link>
+            ))}
+          </div>
         )}
       </main>
       <Footer />
     </>
   );
-};
-
-export default MyGroupsPage;
+}

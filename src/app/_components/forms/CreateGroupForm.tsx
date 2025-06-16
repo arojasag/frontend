@@ -101,7 +101,7 @@ export default function CreateGroupForm() {
       });
 
       // Navigate to the search page after successful creation
-      router.push("/search");
+      router.push("/search?source=groups");
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Error desconocido";
@@ -112,7 +112,10 @@ export default function CreateGroupForm() {
   return (
     <div>
       {/* Enlace para volver al feed */}
-      <Link href="/feed" className="mb-4 block text-stone-400 hover:underline">
+      <Link
+        href="/search?source=groups"
+        className="mb-4 block text-stone-400 hover:underline"
+      >
         &larr; Volver al inicio
       </Link>
 
