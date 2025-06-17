@@ -15,7 +15,7 @@ function StepName<T extends { name: string }>({
   data,
   onChange,
   onNext,
-  onBack,
+  // onBack,
 }: StepNameProps<T>) {
   return (
     <div>
@@ -30,10 +30,10 @@ function StepName<T extends { name: string }>({
         onChange={(e) => onChange({ ...data, name: e.target.value })}
       />
 
-      <div className="mt-6 flex justify-between">
-        <Button variant="outline" onClick={onBack} className="cursor-pointer">
+      <div className="mt-6 flex justify-end">
+        {/* <Button variant="outline" onClick={onBack} className="cursor-pointer">
           Anterior
-        </Button>
+        </Button> */}
         <Button
           onClick={onNext}
           disabled={data.name.trim().length < 3}
