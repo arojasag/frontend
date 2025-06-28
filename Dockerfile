@@ -13,12 +13,12 @@ COPY . .
 # The default value is `prod`
 #   `prod` -> production
 #   `dev` -> development
-ARG mode=prod
-ENV mode=${mode}
-
-RUN echo "Running in $mode mode"
-RUN if [ "$mode" = "prod" ]; then npm run build; fi
+ARG APP_MODE=prod
+ENV APP_MODE=${APP_MODE}
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "if [ \"$mode\" = \"dev\" ]; then npm run dev; else npm run start; fi"]
+RUN echo "Running in $APP_MODE mode"
+
+RUN chmod +x ./entrypoint.sh
+ENTRYPOINT [ "./entrypoint.sh" ]
