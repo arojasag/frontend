@@ -59,16 +59,13 @@ cp .env.example .env
 
 ### Running and building the frontend
 
-> [!IMPORTANT]
-> Don't forget that you need to specify `mu_fe_local` in the docker compose command, when you run the frontend isolated.
-
 You can run the project using docker compose, with the following command:
 
 ```sh
-docker compose up --build mu_fe_local
+docker compose -f docker-compose.felocal.yml up --build
 ```
 
-This command runs a container dedicated to run the frontend without the need to run all the project. You should run it with mu_fe_local, otherwise docker will run the service intended to run with all the project.
+This command runs a container dedicated to run the frontend without the need to run all the project. You should run it with the `-f docker-compose.felocal.yml`, otherwise docker will run the service intended to run with all the project.
 
 ### Partially clean enviroment
 

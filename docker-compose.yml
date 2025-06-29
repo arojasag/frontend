@@ -1,20 +1,4 @@
 services:
-  mu_fe_local:
-    build:
-      context: .
-      args:
-        APP_MODE: ${mu_fe_MODE:-dev}
-
-    container_name: ${mu_fe_HOSTNAME:-mu_fe}_local
-
-    hostname: ${mu_fe_HOSTNAME:-mu_fe}
-
-    environment:
-      GRAPHQL_API: http://${mu_ag_HOSTNAME:-localhost}:${mu_ag_INTERNAL_PORT:-4000}/query
-
-    ports:
-      - ${mu_fe_EXPOSED_PORT:-3000}:3000
-
   mu_fe:
     build:
       context: .
