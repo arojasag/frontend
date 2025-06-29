@@ -35,8 +35,9 @@ cat .gitignore .prodignore > .dockerignore
   - [Running the frontend](#running-the-frontend)
     - [Running Locally](#running-locally)
     - [Running using Docker](#running-using-docker)
-  - [Developing](#developing)
-    - [Hot-reload in Docker](#hot-reload-in-docker)
+      - [Setting up the needed environment variables](#setting-up-the-needed-environment-variables)
+      - [Partially clean enviroment](#partially-clean-enviroment)
+      - [Fully clean environment](#fully-clean-environment)
 
 ---
 
@@ -58,61 +59,41 @@ npm run dev
 
 ### Running using Docker
 
-The repo contains a dockerfile. You can run the container either with a `dev` or
-`prod` build mode.
+#### Setting up the needed environment variables
 
-You should first create the image with:
+In order for you to run the project, you need a .env file with various variables.
+You can find a good and functional example of a .env file in .env.example, and you
+can run the following command to get the environment variables needed:
 
 ```sh
-docker build --build-args mode=<mode> -t <image_name>
+cp .env.example .env
 ```
 
-`mode` can be:
-
-- `prod`, which means "production"
-- `dev`, which means "development"
-
-By default, the `mode` is set to `prod`, so if you want to run the production build,
-you may simply run:
+You can run the project using docker compose, with the following command:
 
 ```sh
-docker build -t <image_name>
+docker compose up --build mu_fe_local
 ```
 
-Then execute the container with:
+This command runs a container dedicated to run the frontend without the need to run all the project. You should run it with mu_fe_local, otherwise docker will run the service intended to run with all the project.
+
+#### Partially clean enviroment
+
+> [!TIP]
+> If you want to have a _almost_ clean build you need to stop
+> and remove containers, networks by running:
 
 ```sh
-docker run -p 3000:3000 <image_name>
+docker compose down --remove-orphans
 ```
 
-In dettached mode:
+#### Fully clean environment
+
+> [!WARNING]
+> The following command gives you a clean slate to start from, but it
+> remove the volumes too. So any data that you may have, it will be
+> removed as well.
 
 ```sh
-docker run -d -p 3000:3000 <image_name>
-```
-
-## Developing
-
-### Hot-reload in Docker
-
-This will watch for file changes and automatically rebuild. To enable hot-reload
-development in Docker, run the container with a volume mount to sync your local
-changes in `dev` mode:
-
-1. Build in `dev` mode:
-
-    ```sh
-    docker build --build-arg mode=dev -t <image_name>
-    ```
-
-1. Mount current directory into the container:
-
-    ```sh
-    docker run -p 3000:3000 -v $(pwd):/Swarch2A_Frontend <image_name>
-    ```
-
-> You may also prefer running it in dettached mode. Like this:
-
-```sh
-docker run -d -p 3000:3000 -v $(pwd):/Swarch2A_Frontend <image_name>
+docker compose down --remove-orphans --volumes
 ```
