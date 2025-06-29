@@ -10,23 +10,7 @@ Frontend Developed with NextJS, set with:
 
 Also, aditional tools:
 
-- tRPC, for APIs
-
-> [!TIP]
-> Use hot-reload with Docker to develop without worrying about dependencies by
-> following [these instructions](#hot-reload-in-docker).
-
----
-
-> [!IMPORTANT]
-> Make sure your `.dockerignore` file is set up correctly to exclude any
-> unnecessary files. Like so:
-
-```sh
-cat .gitignore .prodignore > .dockerignore
-```
-
----
+- tRPC
 
 ## Table of contents
 
@@ -58,6 +42,16 @@ npm run dev
 ```
 
 ### Running using Docker
+
+---
+
+> [!IMPORTANT]
+> Make sure your `.dockerignore` file is set up correctly to exclude any
+> unnecessary files. Like so:
+
+```sh
+cat .gitignore .prodignore > .dockerignore
+```
 
 #### Setting up the needed environment variables
 
