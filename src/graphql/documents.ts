@@ -60,3 +60,15 @@ export const CREATE_GROUP = gql`
     }
   }
 `;
+
+/** Sign Up */
+export const SIGN_UP = gql`
+  mutation SignUp ($input: SignUp!){
+    signUp(input: $input) {
+        id
+        email
+        username
+        isSuperUser
+    }
+  }
+`
