@@ -10,39 +10,20 @@ Frontend Developed with NextJS, set with:
 
 Also, aditional tools:
 
-- tRPC, for APIs
-
-> [!TIP]
-> Use hot-reload with Docker to develop without worrying about dependencies by
-> following [these instructions](#hot-reload-in-docker).
-
----
-
-> [!IMPORTANT]
-> Make sure your `.dockerignore` file is set up correctly to exclude any
-> unnecessary files. Like so:
-
-```sh
-cat .gitignore .prodignore > .dockerignore
-```
-
----
+- tRPC
 
 ## Table of contents
 
 - [Frontend](#frontend)
   - [Table of contents](#table-of-contents)
-  - [Running the frontend](#running-the-frontend)
-    - [Running Locally](#running-locally)
-    - [Running using Docker](#running-using-docker)
-  - [Developing](#developing)
-    - [Hot-reload in Docker](#hot-reload-in-docker)
+  - [Running Locally](#running-locally)
+  - [Running using Docker](#running-using-docker)
+    - [Setting up the needed environment variables](#setting-up-the-needed-environment-variables)
+    - [Running and building the frontend](#running-and-building-the-frontend)
+    - [Partially clean enviroment](#partially-clean-enviroment)
+    - [Fully clean environment](#fully-clean-environment)
 
----
-
-## Running the frontend
-
-### Running Locally
+## Running Locally
 
 After cloning the repo, don't forget to install nodejs dependencies with:
 
@@ -56,63 +37,56 @@ Then run the following command, to execute the frontend as dev (it's lighter tha
 npm run dev
 ```
 
-### Running using Docker
+## Running using Docker
 
-The repo contains a dockerfile. You can run the container either with a `dev` or
-`prod` build mode.
-
-You should first create the image with:
+> [!IMPORTANT]
+> Make sure your `.dockerignore` file is set up correctly to exclude any
+> unnecessary files. Like so:
 
 ```sh
-docker build --build-args mode=<mode> -t <image_name>
+cat .gitignore .prodignore > .dockerignore
 ```
 
-`mode` can be:
+### Setting up the needed environment variables
 
-- `prod`, which means "production"
-- `dev`, which means "development"
-
-By default, the `mode` is set to `prod`, so if you want to run the production build,
-you may simply run:
+In order for you to run the project, you need a .env file with various variables.
+You can find a good and functional example of a .env file in .env.example, and you
+can run the following command to get the environment variables needed:
 
 ```sh
-docker build -t <image_name>
+cp .env.example .env
 ```
 
-Then execute the container with:
+### Running and building the frontend
+
+> [!IMPORTANT]
+> Don't forget that you need to specify `mu_fe_local` in the docker compose command, when you run the frontend isolated.
+
+You can run the project using docker compose, with the following command:
 
 ```sh
-docker run -p 3000:3000 <image_name>
+docker compose up --build mu_fe_local
 ```
 
-In dettached mode:
+This command runs a container dedicated to run the frontend without the need to run all the project. You should run it with mu_fe_local, otherwise docker will run the service intended to run with all the project.
+
+### Partially clean enviroment
+
+> [!TIP]
+> If you want to have a _almost_ clean build you need to stop
+> and remove containers, networks by running:
 
 ```sh
-docker run -d -p 3000:3000 <image_name>
+docker compose down --remove-orphans
 ```
 
-## Developing
+### Fully clean environment
 
-### Hot-reload in Docker
-
-This will watch for file changes and automatically rebuild. To enable hot-reload
-development in Docker, run the container with a volume mount to sync your local
-changes in `dev` mode:
-
-1. Build in `dev` mode:
-
-    ```sh
-    docker build --build-arg mode=dev -t <image_name>
-    ```
-
-1. Mount current directory into the container:
-
-    ```sh
-    docker run -p 3000:3000 -v $(pwd):/Swarch2A_Frontend <image_name>
-    ```
-
-> You may also prefer running it in dettached mode. Like this:
+> [!WARNING]
+> The following command gives you a clean slate to start from, but it
+> remove the volumes too. So any data that you may have, it will be
+> removed as well.
 
 ```sh
-docker run -d -p 3000:3000 -v $(pwd):/Swarch2A_Frontend <image_name>
+docker compose down --remove-orphans --volumes
 ```
