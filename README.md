@@ -62,10 +62,10 @@ cp .env.example .env
 You can run the project using docker compose, with the following command:
 
 ```sh
-docker compose -f docker-compose.felocal.yml up --build
+docker compose --profile dev up --build
 ```
 
-This command runs a container dedicated to run the frontend without the need to run all the project. You should run it with the `-f docker-compose.felocal.yml`, otherwise docker will run the service intended to run with all the project.
+This command runs a container dedicated to run the frontend without the need to run all the project. You should run it with the `--profile dev` flag, otherwise docker will run the service intended to run with all the project.
 
 ### Partially clean enviroment
 
