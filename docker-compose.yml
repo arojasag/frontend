@@ -8,8 +8,8 @@ services:
     container_name: ${mu_fe_HOSTNAME:-mu_fe}-1
     environment:
       GRAPHQL_API: http://${mu_ag_HOSTNAME:-mu_ag}:${mu_ag_INTERNAL_PORT:-4000}/query
-    networks:
-      - private
+    # networks:
+    #   - private
     profiles:
       - prod
 
@@ -22,8 +22,8 @@ services:
     container_name: ${mu_fe_HOSTNAME:-mu_fe}-2
     environment:
       GRAPHQL_API: http://${mu_ag_HOSTNAME:-mu_ag}:${mu_ag_INTERNAL_PORT:-4000}/query
-    networks:
-      - private
+    # networks:
+    #   - private
     profiles:
       - prod
 
@@ -36,8 +36,8 @@ services:
     container_name: ${mu_fe_HOSTNAME:-mu_fe}-3
     environment:
       GRAPHQL_API: http://${mu_ag_HOSTNAME:-mu_ag}:${mu_ag_INTERNAL_PORT:-4000}/query
-    networks:
-      - private
+    # networks:
+    #   - private
     profiles:
       - prod
 
