@@ -1,55 +1,54 @@
+#--------------------------------------------------------------------------------------------------------------------------#
+#|                                                COMMON CONFIGURATIONS                                                   |#
+#--------------------------------------------------------------------------------------------------------------------------#
+# &mu-ag-common-config is what's called an anchor in .yaml files. It lets us reuse everything that follows, so that 
+# setting up the dev and prod profiles is easier
+x-mu-fe-common-config: &mu-fe-common-config
+  build:
+    context: .
+    args:
+      APP_MODE: ${mu_fe_MODE:-prod}
+
+  environment:
+    GRAPHQL_API: http://${mu_ag_HOSTNAME:-mu_ag}:${mu_ag_INTERNAL_PORT:-4000}/query
+
+
 services:
-  mu_fe1:
-    build:
-      context: .
-      args:
-        APP_MODE: ${mu_fe_MODE:-prod}
+#--------------------------------------------------------------------------------------------------------------------------#
+#|                                                PROFILES FOR PRODUCTION                                                 |#
+#--------------------------------------------------------------------------------------------------------------------------#
+  # These profiles don't expose any ports to the host. The networks they are connected to are defined at the root of the
+  # project in a Docker Compose override file:
+  mu_fe_prod1:
+    <<: *mu-fe-common-config
     hostname: ${mu_fe_HOSTNAME:-mu_fe}-1
     container_name: ${mu_fe_HOSTNAME:-mu_fe}-1
-    environment:
-      GRAPHQL_API: http://${mu_ag_HOSTNAME:-mu_ag}:${mu_ag_INTERNAL_PORT:-4000}/query
-    # networks:
-    #   - private
     profiles:
       - prod
 
-  mu_fe2:
-    build:
-      context: .
-      args:
-        APP_MODE: ${mu_fe_MODE:-prod}
+  mu_fe_prod2:
+    <<: *mu-fe-common-config
     hostname: ${mu_fe_HOSTNAME:-mu_fe}-2
     container_name: ${mu_fe_HOSTNAME:-mu_fe}-2
-    environment:
-      GRAPHQL_API: http://${mu_ag_HOSTNAME:-mu_ag}:${mu_ag_INTERNAL_PORT:-4000}/query
-    # networks:
-    #   - private
     profiles:
       - prod
 
-  mu_fe3:
-    build:
-      context: .
-      args:
-        APP_MODE: ${mu_fe_MODE:-prod}
+  mu_fe_prod3:
+    <<: *mu-fe-common-config
     hostname: ${mu_fe_HOSTNAME:-mu_fe}-3
     container_name: ${mu_fe_HOSTNAME:-mu_fe}-3
-    environment:
-      GRAPHQL_API: http://${mu_ag_HOSTNAME:-mu_ag}:${mu_ag_INTERNAL_PORT:-4000}/query
-    # networks:
-    #   - private
     profiles:
       - prod
 
+
+#--------------------------------------------------------------------------------------------------------------------------#
+#|                                                PROFILES FOR DEVELOPMENT                                                |#
+#--------------------------------------------------------------------------------------------------------------------------#
+  # Web frontend for development (connected to the default network and exposing its ports to the host)
   mu_fe_dev:
-    build:
-      context: .
-      args:
-        APP_MODE: ${mu_fe_MODE:-dev}
+    <<: *mu-fe-common-config
     container_name: ${mu_fe_HOSTNAME:-mu_fe}_local
     hostname: ${mu_fe_HOSTNAME:-mu_fe}
-    environment:
-      GRAPHQL_API: http://${mu_ag_HOSTNAME:-localhost}:${mu_ag_INTERNAL_PORT:-4000}/query
     ports:
       - ${mu_fe_EXPOSED_PORT:-3000}:3000
     profiles:
