@@ -4,16 +4,16 @@
 
 import { ApolloError, type DocumentNode } from "@apollo/client";
 import { randomUUID } from "crypto";
-import type { GraphQLError } from "graphql/error/GraphQLError";
-import { GraphQLHeaders, serverClient } from "~/graphql/apolloClient";
+import type { GraphQLFormattedError } from "graphql/error/GraphQLError";
+import { RequestHeaders, serverClient } from "~/graphql/apolloClient";
 
 interface ServerResponse<T> {
   data?: T
-  errors?: GraphQLError[]
+  errors?: GraphQLFormattedError[]
 }
 
 interface GraphQLResponse<T> extends ServerResponse<T>{
-  headers?: Record<string, string>;
+  headers?: Headers;
 }
 
 /**
@@ -56,10 +56,11 @@ export const callGraphqlAPI = async<T> (
             })
         }
 
-        const headers = GraphQLHeaders[context.reqId];
-        console.log(headers)
-
-        return { data: result.data as T };
+        return {
+            data: result.data as T,
+            errors: result.errors ? [...result.errors] : undefined,
+            headers: RequestHeaders[context.reqId]
+        };
 
     } catch (error) {
 

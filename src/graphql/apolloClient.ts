@@ -6,15 +6,16 @@ import {
   HttpLink,
   ApolloLink,
   from,
+  type DefaultContext,
 } from "@apollo/client";
 import type { UUID } from "crypto";
 
 type ReqHeaders = Record<UUID, Headers>
 
 /** A record that stores the headers of the various requests */
-export const GraphQLHeaders: ReqHeaders = {}
+export const RequestHeaders: ReqHeaders = {}
 
-interface ApolloContext {
+interface ApolloContext extends DefaultContext{
   response: {
     headers: Headers
   }
@@ -27,7 +28,7 @@ const headerCaptureLink = new ApolloLink((operation, forward) => {
 
     const context = operation.getContext() as ApolloContext;
     const reqId = context.reqId;
-    GraphQLHeaders[reqId] = context.response.headers;
+    RequestHeaders[reqId] = context.response.headers;
 
     return response;
   });
