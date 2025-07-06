@@ -36,16 +36,17 @@ export const authRouter = createTRPCRouter({
             ))
             if(!response.errors) {
                 if(response.data?.signUp.authToken) {
-                    ctx.res.cookies.set('auth_token', response.data.signUp.authToken, {
-                        httpOnly: true,
-                        secure: true,
-                        sameSite: 'lax',
-                        maxAge: 3600,
-                    });
+                    const cookie = [
+                    `auth_token=${response.data?.signUp.authToken}`,
+                    "HttpOnly",
+                    "Secure",
+                    "SameSite=Lax",
+                    "Path=/",
+                    "Max-Age=3600"
+                    ].join("; ");
+                    ctx.headers.set("Set-Cookie", cookie);
                 }
-                console.log("Context!!")
-                console.log(ctx.res)
-                return response.data
+                return response.data?.signUp;
             }
             else return response.errors;
         })
