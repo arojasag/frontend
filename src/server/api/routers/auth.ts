@@ -77,7 +77,7 @@ export const authRouter = createTRPCRouter({
             email: z.string().email(),
             password: z.string(),
         }))
-        .query(async ( { input, ctx } ): Promise<LoginProcedureReturn> => {
+        .mutation(async ( { input, ctx } ): Promise<LoginProcedureReturn> => {
             const response = (await callGraphqlAPI<{login: LoginUserReturn}>(
                 LOGIN,
                 true,
