@@ -46,7 +46,8 @@ export const authRouter = createTRPCRouter({
                     ].join("; ");
                     ctx.headers.set("Set-Cookie", cookie);
                 }
-                return response.data?.signUp;
+                const { authToken: _, ...withoutAuthToken } = response.data?.signUp ?? {};
+                return withoutAuthToken;
             }
             else return response.errors;
         })
