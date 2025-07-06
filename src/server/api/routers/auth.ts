@@ -23,7 +23,7 @@ export const authRouter = createTRPCRouter({
             username: z.string(),
         }))
         .mutation(async ({ input, ctx }) => {
-            const response = (await callGraphqlAPI<User>(
+            const response = (await callGraphqlAPI<{signUp: User}>(
                 SIGN_UP,
                 true,
                 {
@@ -35,8 +35,8 @@ export const authRouter = createTRPCRouter({
                 }
             ))
             if(!response.errors) {
-                if(response.data?.authToken) {
-                    ctx.res.cookies.set('auth_token', response.data.authToken, {
+                if(response.data?.signUp.authToken) {
+                    ctx.res.cookies.set('auth_token', response.data.signUp.authToken, {
                         httpOnly: true,
                         secure: true,
                         sameSite: 'lax',
