@@ -4,7 +4,7 @@
 
 import { callGraphqlAPI } from "~/graphql/callGraphql"
 import { createTRPCRouter, publicProcedure } from "../trpc"
-import { SIGN_UP } from "~/graphql/documents"
+import { LOGIN, SIGN_UP } from "~/graphql/documents"
 import { z } from "zod"
 import { TRPCError } from "@trpc/server"
 
@@ -79,7 +79,7 @@ export const authRouter = createTRPCRouter({
         }))
         .query(async ( { input, ctx } ): Promise<LoginProcedureReturn> => {
             const response = (await callGraphqlAPI<{login: LoginUserReturn}>(
-                SIGN_UP,
+                LOGIN,
                 true,
                 {
                     input: {
