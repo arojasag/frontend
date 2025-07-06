@@ -18,9 +18,9 @@ interface GraphQLResponse<T> extends ServerResponse<T>{
 
 interface CallGraphqlAPIProps {
     req: DocumentNode,
-    mutation: boolean,
-    variables: Record<string, unknown>
-    authToken: string
+    mutation?: boolean,
+    variables?: Record<string, unknown>
+    authToken?: string
 }
 
 /**
