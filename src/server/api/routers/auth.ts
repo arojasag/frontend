@@ -7,6 +7,7 @@ import { createTRPCRouter, publicProcedure } from "../trpc"
 import { LOGIN, SIGN_UP } from "~/graphql/documents"
 import { z } from "zod"
 import { TRPCError } from "@trpc/server"
+import { AUTH_TOKEN } from "~/trpc/constants"
 
 interface User {
     id: string
@@ -24,7 +25,7 @@ type LoginProcedureReturn = Omit<LoginUserReturn, 'authToken'>
 
 const setAuthCookie = (token: string, ctx: { headers: Headers }): void => {
   const cookie = [
-    `auth_token=${token}`,
+    `${AUTH_TOKEN}=${token}`,
     "HttpOnly",
     // "Secure",
     "SameSite=Lax",
@@ -32,7 +33,7 @@ const setAuthCookie = (token: string, ctx: { headers: Headers }): void => {
     "Max-Age=3600"
   ].join("; ");
   ctx.headers.set("Set-Cookie", cookie);
-}
+};
 
 export const authRouter = createTRPCRouter({
     singUp: publicProcedure
