@@ -43,6 +43,8 @@ export const authRouter = createTRPCRouter({
                         maxAge: 3600,
                     });
                 }
+                console.log("Context!!")
+                console.log(ctx.res)
                 return response.data
             }
             else return response.errors;

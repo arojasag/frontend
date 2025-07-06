@@ -34,6 +34,7 @@ const handler = async (req: NextRequest) => {
         : undefined,
   });
 
+  console.log(response)
   return response;
 
 }

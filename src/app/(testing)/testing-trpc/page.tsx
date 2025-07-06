@@ -6,6 +6,26 @@
 import { useReducer } from "react";
 import { api } from "~/trpc/react";
 
+type FormState = Record<string, string>;
+
+type FormAction = {
+  type: 'UPDATE_FIELD';
+  fieldId: string;
+  value: string;
+};
+
+const formReducer = (state: FormState, action: FormAction): FormState => {
+  switch (action.type) {
+    case 'UPDATE_FIELD':
+      return {
+        ...state,
+        [action.fieldId]: action.value,
+      };
+    default:
+      return state;
+  }
+};
+
 const Todos = () => {
 
     const { data: groupsData, error: groupsError, isLoading: groupsIsLoading } = api.groups.getGroups.useQuery(undefined, {
@@ -19,6 +39,7 @@ const Todos = () => {
         <main className="flex flex-col items-center w-full min-h-[100vh] bg-[#111111] p-5 gap-5 text-white">
             <h1 className="text-3xl font-semibold text-white">Hola. Testing de tRPC</h1>
             <div className="flex flex-row justify-center w-full gap-10">
+                <SignUpTest/>
                 <section className="flex flex-col items-center justify-center flex-1 border-2 bg-[#222222] h-[100%] p-2 py-10 rounded-md border-2 border-black gap-5 p-5 py-10">
                     {groupsIsLoading  && <h1>{"Cargando Grupos"}</h1>}
                     {groupsError      && <h1 className="text-red text-bold">{"Error consultando Grupos"}</h1> }
@@ -204,3 +225,99 @@ const CreateGroupComponent = () => {
 };
 
 export default Todos;
+
+interface Input {
+    label: string,
+    labelId: string,
+    placeholder: string,
+}
+
+interface SimpleFormProps {
+    inputs: Input[]
+    className: string
+    title?: string
+    buttonMessage?: string
+    onSubmit: (formData: Record<string, string>) => void;
+}
+
+const SimpleForm = (props: SimpleFormProps) => {
+
+    const initialState = props.inputs.reduce((acc, input) => {
+        acc[input.labelId] = '';
+        return acc;
+    }, {} as FormState);
+
+    const [formState, dispatch] = useReducer(formReducer, initialState);
+
+    const handleChange = (fieldId: string, value: string) => {
+        dispatch({ type: 'UPDATE_FIELD', fieldId, value });
+    };
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        console.log('Form submitted:', formState);
+        props.onSubmit(formState);
+    };
+
+    return (
+        <form className={props.className} onSubmit={handleSubmit}>
+            <h3>{props.title ?? "Test Form"}</h3>
+            {props.inputs.map(input => {
+                return (
+                    <div key={input.labelId} className="flex flex-col gap-1 p-1">
+                        <label htmlFor={input.labelId}>{input.label}</label>
+                        <input
+                            type="text"
+                            id={input.labelId}
+                            placeholder={input.placeholder}
+                            className="rounded-md border-2 border-white p-1 pl-4"
+                            value={formState[input.labelId] ?? ''}
+                            onChange={(e) => handleChange(input.labelId, e.target.value)}
+                        />
+                    </div>
+                )
+            })}
+            <button type="submit"
+                className="border-2 rounded-md bg-blue-500 p-1 px-3"
+            >
+                {props.buttonMessage ?? "Enviar"}
+            </button>
+        </form>
+    )
+}
+
+interface NewUser {
+    email: string,
+    username: string,
+    password: string
+}
+
+const SignUpTest = () => {
+
+    const inputs: Input[] = [
+        {label: "Correo", labelId: "email", placeholder: "Correo"},
+        {label: "Username", labelId: "username", placeholder: "Nombre de Usuario"},
+        {label: "Contraseña", labelId: "password", placeholder: "Contraseña"}
+    ];
+
+    const mutation = api.auth.singUp.useMutation();
+
+    return (
+        <section className="flex flex-col items-center justify-center w-[25%] border-2 bg-[#222222] h-[100%] p-2 py-10 rounded-md border-2 border-black gap-5 p-5 py-10">
+            <SimpleForm
+            inputs={inputs}
+            title="Sign Up"
+            onSubmit={formData => {
+                mutation.mutate(formData as unknown as NewUser, {
+                    onSuccess: (data) => {
+                        console.log("Registro exitoso:", data);
+                    },
+                    onError: (error) => {
+                        console.error("Error en registro:", error);
+                    }
+                });
+            }}
+            className={"flex flex-col items-center justify-center gap-4 p-1 bg-[#333333] border-2 border-black rounded-md p-4"}/>
+        </section>
+    )
+}
