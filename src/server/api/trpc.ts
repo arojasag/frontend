@@ -12,7 +12,7 @@ import { ZodError } from "zod";
 
 import type { NextRequest } from 'next/server';
 
-import { AUTH_TOKEN } from "~/trpc/constants";
+import { AUTH_TOKEN } from "~/server/api/constants";
 
 /**
  * 1. CONTEXT

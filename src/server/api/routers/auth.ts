@@ -7,7 +7,7 @@ import { createTRPCRouter, publicProcedure } from "../trpc"
 import { LOGIN, SIGN_UP } from "~/graphql/documents"
 import { z } from "zod"
 import { TRPCError } from "@trpc/server"
-import { AUTH_TOKEN } from "~/trpc/constants"
+import { AUTH_TOKEN } from "~/server/api/constants"
 
 interface User {
     id: string
