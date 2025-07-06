@@ -26,7 +26,7 @@ const setAuthCookie = (token: string, ctx: { headers: Headers }): void => {
   const cookie = [
     `auth_token=${token}`,
     "HttpOnly",
-    "Secure",
+    // "Secure",
     "SameSite=Lax",
     "Path=/",
     "Max-Age=3600"
