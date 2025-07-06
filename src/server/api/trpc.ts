@@ -10,7 +10,7 @@ import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
-import type { NextRequest } from 'next/server';
+import type { NextRequest, NextResponse } from 'next/server';
 
 /**
  * 1. CONTEXT
@@ -26,6 +26,7 @@ import type { NextRequest } from 'next/server';
  */
 export const createTRPCContext = async (opts: {
   req: NextRequest,
+  res: NextResponse,
 }) => {
 
   return {
