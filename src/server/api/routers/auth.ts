@@ -6,6 +6,7 @@ import { callGraphqlAPI } from "~/graphql/callGraphql"
 import { createTRPCRouter, publicProcedure } from "../trpc"
 import { SIGN_UP } from "~/graphql/documents"
 import { z } from "zod"
+import type { GraphQLFormattedError } from "graphql"
 
 interface User {
     id: string
@@ -15,6 +16,12 @@ interface User {
     authToken: string
 }
 
+type SignUpProcedureReturn = Omit<User, 'authToken'>
+
+type LoginUserReturn = Omit<User, 'id' | 'isSuperUser'>
+
+type LoginProcedureReturn = Omit<LoginUserReturn, 'authToken'>
+
 export const authRouter = createTRPCRouter({
     singUp: publicProcedure
         .input(z.object({
@@ -22,7 +29,7 @@ export const authRouter = createTRPCRouter({
             password: z.string(),
             username: z.string(),
         }))
-        .mutation(async ({ input, ctx }) => {
+        .mutation(async ({ input, ctx }): Promise<SignUpProcedureReturn | GraphQLFormattedError[]> => {
             const response = (await callGraphqlAPI<{signUp: User}>(
                 SIGN_UP,
                 true,
@@ -35,19 +42,24 @@ export const authRouter = createTRPCRouter({
                 }
             ))
             if(!response.errors) {
-                if(response.data?.signUp.authToken) {
-                    const cookie = [
-                    `auth_token=${response.data?.signUp.authToken}`,
-                    "HttpOnly",
-                    "Secure",
-                    "SameSite=Lax",
-                    "Path=/",
-                    "Max-Age=3600"
-                    ].join("; ");
-                    ctx.headers.set("Set-Cookie", cookie);
+                if(response.data) { // This always happens
+                    const user = response.data.signUp;
+                    if(user.authToken) {
+                        const cookie = [
+                        `auth_token=${user.authToken}`,
+                        "HttpOnly",
+                        "Secure",
+                        "SameSite=Lax",
+                        "Path=/",
+                        "Max-Age=3600"
+                        ].join("; ");
+                        ctx.headers.set("Set-Cookie", cookie);
+                    }
+                    const { authToken: _, ...withoutAuthToken } = user;
+                    return withoutAuthToken;
+                } else {
+                    throw new Error("Invalid GraphQL Response, no data, no errors") // This will never happen
                 }
-                const { authToken: _, ...withoutAuthToken } = response.data?.signUp ?? {};
-                return withoutAuthToken;
             }
             else return response.errors;
         })
@@ -57,8 +69,8 @@ export const authRouter = createTRPCRouter({
             email: z.string().email(),
             password: z.string(),
         }))
-        .query(async ( { input, ctx }) => {
-            const response = (await callGraphqlAPI<{login: User}>(
+        .query(async ( { input, ctx } ): Promise<LoginProcedureReturn | GraphQLFormattedError[]> => {
+            const response = (await callGraphqlAPI<{login: LoginUserReturn}>(
                 SIGN_UP,
                 true,
                 {
@@ -69,19 +81,24 @@ export const authRouter = createTRPCRouter({
                 }
             ))
             if(!response.errors) {
-                if(response.data?.login.authToken) {
-                    const cookie = [
-                    `auth_token=${response.data?.login.authToken}`,
-                    "HttpOnly",
-                    "Secure",
-                    "SameSite=Lax",
-                    "Path=/",
-                    "Max-Age=3600"
-                    ].join("; ");
-                    ctx.headers.set("Set-Cookie", cookie);
+                if(response.data) { // This always happens
+                    const user = response.data.login;
+                    if(user.authToken) {
+                        const cookie = [
+                        `auth_token=${user.authToken}`,
+                        "HttpOnly",
+                        "Secure",
+                        "SameSite=Lax",
+                        "Path=/",
+                        "Max-Age=3600"
+                        ].join("; ");
+                        ctx.headers.set("Set-Cookie", cookie);
+                    }
+                    const { authToken: _, ...withoutAuthToken } = user;
+                    return withoutAuthToken;
+                } else {
+                    throw new Error("Invalid GraphQL Response, no data, no errors") // This will never happen
                 }
-                const { authToken: _, ...withoutAuthToken } = response.data?.login ?? {};
-                return withoutAuthToken;
             }
             else return response.errors;
         })
