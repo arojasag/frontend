@@ -20,7 +20,7 @@ export const authRouter = createTRPCRouter({
             email: z.string().email(),
             password: z.string()
         }))
-        .mutation(async ({ input }) => {
+        .mutation(async ({ input, ctx }) => {
             const response = (await callGraphqlAPI<User>(
                 SIGN_UP,
                 true,
@@ -32,7 +32,16 @@ export const authRouter = createTRPCRouter({
                 }
             ))
             if(!response.errors) return response.data
-            else return response;
+            else {
+
+                const token = response.headers?.get('authorization');
+
+                ctx.res.setHeader("Set-Cookie", [
+                    // TODO: set the token as an env variable
+                    `authToken = ${token}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=${3600}`
+                ]);
+                return response;
+            }
         })
         ,
 })

@@ -10,6 +10,8 @@ import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
+import type { NextApiRequest, NextApiResponse } from 'next';
+
 /**
  * 1. CONTEXT
  *
@@ -22,7 +24,12 @@ import { ZodError } from "zod";
  *
  * @see https://trpc.io/docs/server/context
  */
-export const createTRPCContext = async (opts: { headers: Headers }) => {
+export const createTRPCContext = async (opts: {
+  headers: Headers,
+  req: NextApiRequest,
+  res: NextApiResponse
+}) => {
+
   return {
     ...opts,
   };
