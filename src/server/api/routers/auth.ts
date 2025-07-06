@@ -43,17 +43,17 @@ export const authRouter = createTRPCRouter({
             username: z.string(),
         }))
         .mutation(async ({ input, ctx }): Promise<SignUpProcedureReturn> => {
-            const response = (await callGraphqlAPI<{signUp: User}>(
-                SIGN_UP,
-                true,
-                {
+            const response = (await callGraphqlAPI<{signUp: User}>({
+                req: SIGN_UP,
+                mutation: true,
+                variables: {
                     input: {
                         email: input.email,
                         password: input.password,
                         username: input.username,
                     }
                 }
-            ))
+            }))
             if(!response.errors) {
                 if(response.data) { // This always happens
                     const user = response.data.signUp;
@@ -79,16 +79,16 @@ export const authRouter = createTRPCRouter({
             password: z.string(),
         }))
         .mutation(async ( { input, ctx } ): Promise<LoginProcedureReturn> => {
-            const response = (await callGraphqlAPI<{login: LoginUserReturn}>(
-                LOGIN,
-                true,
-                {
+            const response = (await callGraphqlAPI<{login: LoginUserReturn}>({
+                req: LOGIN,
+                mutation: true,
+                variables: {
                     input: {
                         email: input.email,
                         password: input.password,
                     }
                 }
-            ))
+            }))
             if(!response.errors) {
                 if(response.data) { // This always happens
                     const user = response.data.login;

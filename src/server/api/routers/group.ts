@@ -28,8 +28,8 @@ export interface GetGroupsResponse {
 
 export interface CreateGroupResponse {
     id: UUID
-    name: string 
-    description: string    
+    name: string
+    description: string
     isVerified: boolean
     isOpen: boolean
     createdAt: number
@@ -39,13 +39,15 @@ export interface CreateGroupResponse {
 export const groupRouter = createTRPCRouter({
     getGroups: publicProcedure
         .query(async () => {
-            const grps = (await callGraphqlAPI<GetGroupsResponse>(GET_GROUPS)).data;
+            const grps = (await callGraphqlAPI<GetGroupsResponse>({
+                req: GET_GROUPS
+            })).data;
             return {
-                groups: grps?.groups.map(grp => ({                    
+                groups: grps?.groups.map(grp => ({
                     ...grp,
                     createdAt: new Date(grp.createdAt),
                     updatedAt: new Date(grp.updatedAt)
-                })) 
+                }))
             }
         }),
     createGroup: publicProcedure
@@ -56,10 +58,10 @@ export const groupRouter = createTRPCRouter({
             isOpen: z.boolean()
         }))
         .mutation(async({ input }) => {
-            const response = (await callGraphqlAPI <CreateGroupResponse>(
-                CREATE_GROUP, 
-                true, 
-                {
+            const response = (await callGraphqlAPI <CreateGroupResponse>({
+                req: CREATE_GROUP,
+                mutation: true,
+                variables: {
                     input:  {
                         name: input.name,
                         description: input.description,
@@ -71,7 +73,7 @@ export const groupRouter = createTRPCRouter({
                     }
                 }
 
-            ))
+            }))
             const grpCreated = response.data;
             if(!grpCreated) return grpCreated;
             return {
@@ -81,5 +83,5 @@ export const groupRouter = createTRPCRouter({
             }
 
         })
-    
+
 })
