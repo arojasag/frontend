@@ -40,6 +40,7 @@ const Todos = () => {
             <h1 className="text-3xl font-semibold text-white">Hola. Testing de tRPC</h1>
             <div className="flex flex-row justify-center w-full gap-10">
                 <SignUpTest/>
+                <LoginTest/>
                 <section className="flex flex-col items-center justify-center flex-1 border-2 bg-[#222222] h-[100%] p-2 py-10 rounded-md border-2 border-black gap-5 p-5 py-10">
                     {groupsIsLoading  && <h1>{"Cargando Grupos"}</h1>}
                     {groupsError      && <h1 className="text-red text-bold">{"Error consultando Grupos"}</h1> }
@@ -320,4 +321,52 @@ const SignUpTest = () => {
             className={"flex flex-col items-center justify-center gap-4 p-1 bg-[#333333] border-2 border-black rounded-md p-4"}/>
         </section>
     )
+}
+
+interface LoginUser {
+    email: string,
+    password: string
+}
+
+const LoginTest = () => {
+
+    const inputs: Input[] = [
+        {label: "Correo", labelId: "email", placeholder: "Correo"},
+        {label: "Contraseña", labelId: "password", placeholder: "Contraseña"}
+    ];
+
+    const mutation = api.auth.login.useMutation();
+
+    return (
+        <section className="flex flex-col items-center justify-center w-[25%] border-2 bg-[#222222] h-[100%] p-2 py-10 rounded-md border-2 border-black gap-5 p-5 py-10">
+            <SimpleForm
+            inputs={inputs}
+            title="Login"
+            onSubmit={formData => {
+                mutation.mutate(formData as unknown as LoginUser, {
+                    onSuccess: (data) => {
+                        console.log("Registro exitoso:", data);
+                    },
+                    onError: (error) => {
+                        console.error("Error en registro:", error);
+                    }
+                });
+            }}
+            className={"flex flex-col items-center justify-center gap-4 p-1 bg-[#333333] border-2 border-black rounded-md p-4"}
+            />
+            <div>
+                {mutation.data ?
+                    <div className="flex flex-col items-center justify-center">
+                        <h4>Usuario Logueado:</h4>
+                        <p>{mutation.data.email}</p>
+                        <p>{mutation.data.username}</p>
+                    </div>
+                 :
+                <h4> No hay usuario Logueado</h4>
+                }
+            </div>
+        </section>
+
+    )
+
 }
