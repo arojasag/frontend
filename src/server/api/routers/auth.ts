@@ -35,13 +35,17 @@ export const authRouter = createTRPCRouter({
                 }
             ))
             if(!response.errors) {
-                ctx.res.setHeader("Set-Cookie", [
-                    // TODO: set the cookie lifetime duration as an env variable
-                    `authToken = ${response.data?.authToken}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=${3600}`
-                ]);
+                if(response.data?.authToken) {
+                    ctx.res.cookies.set('auth_token', response.data.authToken, {
+                        httpOnly: true,
+                        secure: true,
+                        sameSite: 'lax',
+                        maxAge: 3600,
+                    });
+                }
                 return response.data
             }
-            else return response;
+            else return response.errors;
         })
         ,
 })
