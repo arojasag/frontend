@@ -22,6 +22,18 @@ type LoginUserReturn = Omit<User, 'id' | 'isSuperUser'>
 
 type LoginProcedureReturn = Omit<LoginUserReturn, 'authToken'>
 
+const setAuthCookie = (token: string, ctx: { headers: Headers }): void => {
+  const cookie = [
+    `auth_token=${token}`,
+    "HttpOnly",
+    "Secure",
+    "SameSite=Lax",
+    "Path=/",
+    "Max-Age=3600"
+  ].join("; ");
+  ctx.headers.set("Set-Cookie", cookie);
+}
+
 export const authRouter = createTRPCRouter({
     singUp: publicProcedure
         .input(z.object({
@@ -44,17 +56,7 @@ export const authRouter = createTRPCRouter({
             if(!response.errors) {
                 if(response.data) { // This always happens
                     const user = response.data.signUp;
-                    if(user.authToken) {
-                        const cookie = [
-                        `auth_token=${user.authToken}`,
-                        "HttpOnly",
-                        "Secure",
-                        "SameSite=Lax",
-                        "Path=/",
-                        "Max-Age=3600"
-                        ].join("; ");
-                        ctx.headers.set("Set-Cookie", cookie);
-                    }
+                    setAuthCookie(user.authToken, ctx);
                     const { authToken: _, ...withoutAuthToken } = user;
                     return withoutAuthToken;
                 } else {
@@ -83,17 +85,7 @@ export const authRouter = createTRPCRouter({
             if(!response.errors) {
                 if(response.data) { // This always happens
                     const user = response.data.login;
-                    if(user.authToken) {
-                        const cookie = [
-                        `auth_token=${user.authToken}`,
-                        "HttpOnly",
-                        "Secure",
-                        "SameSite=Lax",
-                        "Path=/",
-                        "Max-Age=3600"
-                        ].join("; ");
-                        ctx.headers.set("Set-Cookie", cookie);
-                    }
+                    setAuthCookie(user.authToken, ctx);
                     const { authToken: _, ...withoutAuthToken } = user;
                     return withoutAuthToken;
                 } else {
