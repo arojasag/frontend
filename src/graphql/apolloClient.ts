@@ -20,10 +20,22 @@ interface ApolloContext extends DefaultContext{
     headers: Headers
   }
   reqId: UUID
+  authToken?: string
 }
 
 /** This Link captures the headers of the response, and saves them in the Record of Headers */
 const headerCaptureLink = new ApolloLink((operation, forward) => {
+  const { authToken } = operation.getContext() as ApolloContext;
+
+  // Setting Auth Token to send to the GraphQL API.
+  operation.setContext(({ headers = {} }) => ({
+    headers: {
+      ...headers,
+      ...(authToken && { Authorization: `Bearer ${authToken}` }),
+    },
+  }));
+
+  // This executes when we receive a response, not when we send a request:
   return forward(operation).map((response) => {
 
     const context = operation.getContext() as ApolloContext;
