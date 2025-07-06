@@ -6,6 +6,22 @@
 import { useReducer } from "react";
 import { api } from "~/trpc/react";
 
+const Testing = () => {
+
+    return (
+        <main className="flex flex-col items-center w-full min-h-[100vh] bg-[#111111] p-5 gap-5 text-white">
+            <h1 className="text-3xl font-semibold text-white">Hola. Testing de tRPC</h1>
+            <div className="flex sm:flex-col lg:flex-row sm:items-center justify-center w-full gap-10">
+                <SignUpTest/>
+                <LoginTest/>
+                <GroupsTest/>
+            </div>
+        </main>
+    )
+};
+
+export default Testing;
+
 type FormState = Record<string, string>;
 
 type FormAction = {
@@ -26,50 +42,103 @@ const formReducer = (state: FormState, action: FormAction): FormState => {
   }
 };
 
-const Todos = () => {
+interface Input {
+    label: string,
+    labelId: string,
+    placeholder: string,
+}
+
+interface SimpleFormProps {
+    inputs: Input[]
+    className: string
+    title?: string
+    buttonMessage?: string
+    onSubmit: (formData: Record<string, string>) => void;
+}
+
+const SimpleForm = (props: SimpleFormProps) => {
+
+    const initialState = props.inputs.reduce((acc, input) => {
+        acc[input.labelId] = '';
+        return acc;
+    }, {} as FormState);
+
+    const [formState, dispatch] = useReducer(formReducer, initialState);
+
+    const handleChange = (fieldId: string, value: string) => {
+        dispatch({ type: 'UPDATE_FIELD', fieldId, value });
+    };
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        console.log('Form submitted:', formState);
+        props.onSubmit(formState);
+    };
+
+    return (
+        <form className={props.className} onSubmit={handleSubmit}>
+            <h3>{props.title ?? "Test Form"}</h3>
+            {props.inputs.map(input => {
+                return (
+                    <div key={input.labelId} className="flex flex-col gap-1 p-1">
+                        <label htmlFor={input.labelId}>{input.label}</label>
+                        <input
+                            type="text"
+                            id={input.labelId}
+                            placeholder={input.placeholder}
+                            className="rounded-md border-2 border-white p-1 pl-4"
+                            value={formState[input.labelId] ?? ''}
+                            onChange={(e) => handleChange(input.labelId, e.target.value)}
+                        />
+                    </div>
+                )
+            })}
+            <button type="submit"
+                className="border-2 rounded-md bg-blue-500 p-1 px-3"
+            >
+                {props.buttonMessage ?? "Enviar"}
+            </button>
+        </form>
+    )
+}
+
+const GroupsTest = () => {
 
     const { data: groupsData, error: groupsError, isLoading: groupsIsLoading } = api.groups.getGroups.useQuery(undefined, {
-    refetchOnWindowFocus: true,
-    refetchOnReconnect: true,
+        refetchOnWindowFocus: true,
+        refetchOnReconnect: true,
     });
 
     const groups = groupsData?.groups ?? [];
 
     return (
-        <main className="flex flex-col items-center w-full min-h-[100vh] bg-[#111111] p-5 gap-5 text-white">
-            <h1 className="text-3xl font-semibold text-white">Hola. Testing de tRPC</h1>
-            <div className="flex flex-row justify-center w-full gap-10">
-                <SignUpTest/>
-                <LoginTest/>
-                <section className="flex flex-col items-center justify-center flex-1 border-2 bg-[#222222] h-[100%] p-2 py-10 rounded-md border-2 border-black gap-5 p-5 py-10">
-                    {groupsIsLoading  && <h1>{"Cargando Grupos"}</h1>}
-                    {groupsError      && <h1 className="text-red text-bold">{"Error consultando Grupos"}</h1> }
-                    {!groupsIsLoading && !groupsError && (
-                        <>
-                            <h2>Grupos</h2>
-                            <CreateGroupComponent/>
-                            <h3>Lista de Grupos</h3>
-                            <div className="grid grid-cols-2 w-full gap-5">
-                                {groups.map(grp => {
-                                    return (
-                                        <div
-                                            key={grp.id}
-                                            className="flex flex-col items-center justify-center rounded-md border-2 border-black bg-[#333333] p-5 gap-3"
-                                        >
-                                            <h4 className="font-semibold text-xl">{grp.name}</h4>
-                                            <p className="text-white">{grp.description}</p>
-                                            <img src={`data:image/${grp.profilePic.mimeType};base64,${grp.profilePic.data}`} alt={`${grp.name} pic`} />
-                                        </div>)
-                                    })
-                                }
-                            </div>
-                        </>
-                    )}
-                </section>
-            </div>
-        </main>
+    <section className="flex flex-col items-center justify-center sm:w-[100%] lg:flex-1 border-2 bg-[#222222] h-[100%] p-2 py-10 rounded-md border-2 border-black gap-5 p-5 py-10">
+        {groupsIsLoading  && <h1>{"Cargando Grupos"}</h1>}
+        {groupsError      && <h1 className="text-red text-bold">{"Error consultando Grupos"}</h1> }
+        {!groupsIsLoading && !groupsError && (
+            <>
+                <h2>Grupos</h2>
+                <CreateGroupComponent/>
+                <h3>Lista de Grupos</h3>
+                <div className="grid grid-cols-2 w-full gap-5">
+                    {groups.map(grp => {
+                        return (
+                            <div
+                                key={grp.id}
+                                className="flex flex-col items-center justify-center rounded-md border-2 border-black bg-[#333333] p-5 gap-3"
+                            >
+                                <h4 className="font-semibold text-xl">{grp.name}</h4>
+                                <p className="text-white">{grp.description}</p>
+                                <img src={`data:image/${grp.profilePic.mimeType};base64,${grp.profilePic.data}`} alt={`${grp.name} pic`} />
+                            </div>)
+                        })
+                    }
+                </div>
+            </>
+        )}
+    </section>
     )
-};
+}
 
 interface GroupToCreate {
     name?: string
@@ -225,68 +294,6 @@ const CreateGroupComponent = () => {
     );
 };
 
-export default Todos;
-
-interface Input {
-    label: string,
-    labelId: string,
-    placeholder: string,
-}
-
-interface SimpleFormProps {
-    inputs: Input[]
-    className: string
-    title?: string
-    buttonMessage?: string
-    onSubmit: (formData: Record<string, string>) => void;
-}
-
-const SimpleForm = (props: SimpleFormProps) => {
-
-    const initialState = props.inputs.reduce((acc, input) => {
-        acc[input.labelId] = '';
-        return acc;
-    }, {} as FormState);
-
-    const [formState, dispatch] = useReducer(formReducer, initialState);
-
-    const handleChange = (fieldId: string, value: string) => {
-        dispatch({ type: 'UPDATE_FIELD', fieldId, value });
-    };
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        console.log('Form submitted:', formState);
-        props.onSubmit(formState);
-    };
-
-    return (
-        <form className={props.className} onSubmit={handleSubmit}>
-            <h3>{props.title ?? "Test Form"}</h3>
-            {props.inputs.map(input => {
-                return (
-                    <div key={input.labelId} className="flex flex-col gap-1 p-1">
-                        <label htmlFor={input.labelId}>{input.label}</label>
-                        <input
-                            type="text"
-                            id={input.labelId}
-                            placeholder={input.placeholder}
-                            className="rounded-md border-2 border-white p-1 pl-4"
-                            value={formState[input.labelId] ?? ''}
-                            onChange={(e) => handleChange(input.labelId, e.target.value)}
-                        />
-                    </div>
-                )
-            })}
-            <button type="submit"
-                className="border-2 rounded-md bg-blue-500 p-1 px-3"
-            >
-                {props.buttonMessage ?? "Enviar"}
-            </button>
-        </form>
-    )
-}
-
 interface NewUser {
     email: string,
     username: string,
@@ -304,7 +311,7 @@ const SignUpTest = () => {
     const mutation = api.auth.singUp.useMutation();
 
     return (
-        <section className="flex flex-col items-center justify-center w-[25%] border-2 bg-[#222222] h-[100%] p-2 py-10 rounded-md border-2 border-black gap-5 p-5 py-10">
+        <section className="flex flex-col items-center justify-center sm:w-[80%] lg:w-[25%] border-2 bg-[#222222] h-[100%] p-2 py-10 rounded-md border-2 border-black gap-5 p-5 py-10">
             <SimpleForm
             inputs={inputs}
             title="Sign Up"
@@ -318,7 +325,7 @@ const SignUpTest = () => {
                     }
                 });
             }}
-            className={"flex flex-col items-center justify-center gap-4 p-1 bg-[#333333] border-2 border-black rounded-md p-4"}/>
+            className={"flex flex-col items-center justify-center gap-4 p-1 w-[80%] bg-[#333333] border-2 border-black rounded-md p-4"}/>
         </section>
     )
 }
@@ -338,7 +345,7 @@ const LoginTest = () => {
     const mutation = api.auth.login.useMutation();
 
     return (
-        <section className="flex flex-col items-center justify-center w-[25%] border-2 bg-[#222222] h-[100%] p-2 py-10 rounded-md border-2 border-black gap-5 p-5 py-10">
+        <section className="flex flex-col items-center justify-center sm:w-[80%] lg:w-[25%] border-2 bg-[#222222] h-[100%] p-2 py-10 rounded-md border-2 border-black gap-5 p-5 py-10">
             <SimpleForm
             inputs={inputs}
             title="Login"
