@@ -52,4 +52,37 @@ export const authRouter = createTRPCRouter({
             else return response.errors;
         })
         ,
+    login: publicProcedure
+        .input(z.object({
+            email: z.string().email(),
+            password: z.string(),
+        }))
+        .query(async ( { input, ctx }) => {
+            const response = (await callGraphqlAPI<{login: User}>(
+                SIGN_UP,
+                true,
+                {
+                    input: {
+                        email: input.email,
+                        password: input.password,
+                    }
+                }
+            ))
+            if(!response.errors) {
+                if(response.data?.login.authToken) {
+                    const cookie = [
+                    `auth_token=${response.data?.login.authToken}`,
+                    "HttpOnly",
+                    "Secure",
+                    "SameSite=Lax",
+                    "Path=/",
+                    "Max-Age=3600"
+                    ].join("; ");
+                    ctx.headers.set("Set-Cookie", cookie);
+                }
+                const { authToken: _, ...withoutAuthToken } = response.data?.login ?? {};
+                return withoutAuthToken;
+            }
+            else return response.errors;
+        })
 })
