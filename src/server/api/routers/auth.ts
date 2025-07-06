@@ -6,7 +6,7 @@ import { callGraphqlAPI } from "~/graphql/callGraphql"
 import { createTRPCRouter, publicProcedure } from "../trpc"
 import { SIGN_UP } from "~/graphql/documents"
 import { z } from "zod"
-import type { GraphQLFormattedError } from "graphql"
+import { TRPCError } from "@trpc/server"
 
 interface User {
     id: string
@@ -41,7 +41,7 @@ export const authRouter = createTRPCRouter({
             password: z.string(),
             username: z.string(),
         }))
-        .mutation(async ({ input, ctx }): Promise<SignUpProcedureReturn | GraphQLFormattedError[]> => {
+        .mutation(async ({ input, ctx }): Promise<SignUpProcedureReturn> => {
             const response = (await callGraphqlAPI<{signUp: User}>(
                 SIGN_UP,
                 true,
@@ -63,7 +63,13 @@ export const authRouter = createTRPCRouter({
                     throw new Error("Invalid GraphQL Response, no data, no errors") // This will never happen
                 }
             }
-            else return response.errors;
+            else {
+                  throw new TRPCError({
+                    code: "BAD_REQUEST",
+                    message: "Error en GraphQL",
+                    cause: response.errors
+                });
+            }
         })
         ,
     login: publicProcedure
@@ -71,7 +77,7 @@ export const authRouter = createTRPCRouter({
             email: z.string().email(),
             password: z.string(),
         }))
-        .query(async ( { input, ctx } ): Promise<LoginProcedureReturn | GraphQLFormattedError[]> => {
+        .query(async ( { input, ctx } ): Promise<LoginProcedureReturn> => {
             const response = (await callGraphqlAPI<{login: LoginUserReturn}>(
                 SIGN_UP,
                 true,
@@ -92,6 +98,12 @@ export const authRouter = createTRPCRouter({
                     throw new Error("Invalid GraphQL Response, no data, no errors") // This will never happen
                 }
             }
-            else return response.errors;
+            else {
+                  throw new TRPCError({
+                    code: "BAD_REQUEST",
+                    message: "Error en GraphQL",
+                    cause: response.errors
+                });
+            }
         })
 })
