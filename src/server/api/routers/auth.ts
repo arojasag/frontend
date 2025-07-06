@@ -18,7 +18,8 @@ export const authRouter = createTRPCRouter({
     singUp: publicProcedure
         .input(z.object({
             email: z.string().email(),
-            password: z.string()
+            password: z.string(),
+            username: z.string(),
         }))
         .mutation(async ({ input, ctx }) => {
             const response = (await callGraphqlAPI<User>(
@@ -28,6 +29,7 @@ export const authRouter = createTRPCRouter({
                     input: {
                         email: input.email,
                         password: input.password,
+                        username: input.username,
                     }
                 }
             ))
