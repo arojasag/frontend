@@ -9,18 +9,21 @@ import { createTRPCContext } from "~/server/api/trpc";
  * This wraps the `createTRPCContext` helper and provides the required context for the tRPC API when
  * handling a HTTP request (e.g. when you make requests from Client Components).
  */
-const createContext = async (req: NextRequest) => {
+const createContext = async (req: NextRequest, headers: Headers) => {
   return createTRPCContext({
-    headers: req.headers,
+    req, headers
   });
 };
 
-const handler = (req: NextRequest) =>
-  fetchRequestHandler({
+const handler = async (req: NextRequest) => {
+
+  const responseHeaders = new Headers();
+
+  const response = await fetchRequestHandler({
     endpoint: "/api/trpc",
     req,
     router: appRouter,
-    createContext: () => createContext(req),
+    createContext: () => createContext(req, responseHeaders),
     onError:
       env.NODE_ENV === "development"
         ? ({ path, error }) => {
@@ -30,5 +33,23 @@ const handler = (req: NextRequest) =>
           }
         : undefined,
   });
+
+  const body = await response.text();
+  const status = response.status;
+  const headers = new Headers(response.headers);
+
+  for (const [key, value] of responseHeaders.entries()) {
+    headers.append(key, value);
+  }
+
+  const returnResponse = new Response(body, {
+    status,
+    headers,
+  });
+
+  console.log(returnResponse);
+  return returnResponse;
+
+}
 
 export { handler as GET, handler as POST };

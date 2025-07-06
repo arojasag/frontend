@@ -3,99 +3,49 @@
 
 "use client"
 
-import { useState, useReducer, type SetStateAction } from "react";
+import { useReducer } from "react";
 import { api } from "~/trpc/react";
 
+type FormState = Record<string, string>;
+
+type FormAction = {
+  type: 'UPDATE_FIELD';
+  fieldId: string;
+  value: string;
+};
+
+const formReducer = (state: FormState, action: FormAction): FormState => {
+  switch (action.type) {
+    case 'UPDATE_FIELD':
+      return {
+        ...state,
+        [action.fieldId]: action.value,
+      };
+    default:
+      return state;
+  }
+};
+
 const Todos = () => {
-        
-    const [todoUserName, setTodoUserName] = useState("");
-    const [todoText, setTodoText] = useState("");
-
-    const inputs = [
-        {label: "ID", labelId: "id", placeholder: "UserID", onChange: setTodoUserName},
-        {label: "TODO", labelId: "todo", placeholder: "TODO", onChange: setTodoText},
-    ];    
-
-    const utils = api.useUtils();
-
-    const mutation = api.todos.createTodo.useMutation({
-        onSuccess: async () => {            
-            await utils.todos.getTodo.invalidate();            
-            await utils.todos.getTodo.refetch();            
-        }
-    });
-
-    const { data: todosData, error: todosError, isLoading: todosIsLoading } = api.todos.getTodo.useQuery(undefined, {
-    refetchOnWindowFocus: true,
-    refetchOnReconnect: true,
-    });
 
     const { data: groupsData, error: groupsError, isLoading: groupsIsLoading } = api.groups.getGroups.useQuery(undefined, {
     refetchOnWindowFocus: true,
     refetchOnReconnect: true,
-    });    
+    });
 
-    const sendMutations = async () => {
-        try {
-        const response = await mutation.mutateAsync({ text: todoText, userName: todoUserName });
-        console.log(response.errors);
-        setTodoUserName(""); setTodoText("");
-        } catch (error) { alert(error) }
-    };                
-    
-    const todos = todosData?.todos?.todos ?? [];    
     const groups = groupsData?.groups ?? [];
 
     return (
         <main className="flex flex-col items-center w-full min-h-[100vh] bg-[#111111] p-5 gap-5 text-white">
             <h1 className="text-3xl font-semibold text-white">Hola. Testing de tRPC</h1>
             <div className="flex flex-row justify-center w-full gap-10">
-                <section className="flex flex-col items-center w-[40%] gap-10 border-2 rounded-md border-black p-2 py-10 bg-[#222222]">
-                    {todosIsLoading  && <h1>{"Cargando TODOs"}</h1>}
-                    {todosError      && <h1 className="text-red text-bold">{"Error fetching TODOs"}</h1> }
-                    {!todosIsLoading && !todosError && (
-                    <>
-                        <h2>Crea un nuevo TODO</h2>
-                        <form className="self-center w-[90%] py-4 px-5 bg-[#333333] border-2 border-black text-white rounded-md">
-                            <ul className="flex flex-row justify-center gap-5">
-                                {inputs.map(input => (
-                                    <InputTODO
-                                        key={input.labelId}
-                                        label={input.label}
-                                        labelId={input.labelId}
-                                        placeholder={input.placeholder}
-                                        onChange={input.onChange}
-                                    />
-                                ))}
-                                <li className="flex flex-col justify-end w-[20%]">
-                                    <button 
-                                        type="button" 
-                                        className="flex justify-center items-center border-2 border-black rounded-md text-center font-semibold bg-blue-300 hover:bg-gray-300 hover:cursor-pointer p-1 h-[50%]"
-                                        onClick={() => sendMutations()}
-                                    >
-                                        Crear
-                                    </button>      
-                                </li>
-                            </ul>              
-                        </form>                  
-                        <h2>Lista de TODOS</h2>
-                        <div className="grid grid-cols-2 place-items-center w-[90%] px-5 gap-5 rounded-md">
-                            {todos?.map(todo => (
-                                <div key={todo.id} className="self-center rounded-md border-2 border-black bg-[#333333] w-full p-4 px-8">
-                                    <p className="font-semibold text-white">{todo.text}</p>                                                
-                                    <p className="text-white">{todo.user.name}</p>
-                                </div>
-                            ))}
-                        </div>
-                    </>
-                    )}         
-                </section>
+                <SignUpTest/>
                 <section className="flex flex-col items-center justify-center flex-1 border-2 bg-[#222222] h-[100%] p-2 py-10 rounded-md border-2 border-black gap-5 p-5 py-10">
                     {groupsIsLoading  && <h1>{"Cargando Grupos"}</h1>}
-                    {groupsError      && <h1 className="text-red text-bold">{"Error consultando Grupos"}</h1> }                    
+                    {groupsError      && <h1 className="text-red text-bold">{"Error consultando Grupos"}</h1> }
                     {!groupsIsLoading && !groupsError && (
                         <>
-                            <h2>Grupos</h2>                    
+                            <h2>Grupos</h2>
                             <CreateGroupComponent/>
                             <h3>Lista de Grupos</h3>
                             <div className="grid grid-cols-2 w-full gap-5">
@@ -111,37 +61,14 @@ const Todos = () => {
                                         </div>)
                                     })
                                 }
-                            </div>                        
+                            </div>
                         </>
                     )}
-
                 </section>
             </div>
         </main>
     )
 };
-
-interface inputTODOProps {
-    label: string,
-    labelId: string,
-    placeholder: string,
-    onChange: (input: SetStateAction<string>) => void
-}
-
-const InputTODO = (props: inputTODOProps) => {
-    return (
-        <li className="flex flex-col w-[20%] text-white">
-            <label htmlFor={props.labelId} className="font-semibold text-lg">{props.label}</label>
-            <input 
-                type="text" 
-                id={props.labelId} 
-                placeholder={props.placeholder}
-                className="bg-[#222222] p-1 pl-5 rounded-md"
-                onChange={(e) => props.onChange(e.target.value)}
-            />  
-        </li>      
-    )
-}
 
 interface GroupToCreate {
     name?: string
@@ -159,17 +86,17 @@ interface ChangeGroupState {
 
 
 const CreateGroupComponent = () => {
-    
+
     const groupReducer = (state: GroupToCreate, action: ChangeGroupState) => {
         switch (action.action) {
-            case "name":        return {...state, name: action.newValue as string};                
+            case "name":        return {...state, name: action.newValue as string};
             case "description": return {...state, description: action.newValue as string};
             case "profilePic":  return {...state, profilePic: action.newValue as string};
             case "isOpen":      return {...state, isOpen: action.newValue as boolean}
             case "reset":       return {name: "", description: "", profilePic: "", isOpen: true}
         }
-    };    
-    
+    };
+
     const [groupState, groupsDispatch] = useReducer(groupReducer, {
         name: "",
         description: "",
@@ -178,16 +105,16 @@ const CreateGroupComponent = () => {
     });
 
     const utils = api.useUtils();
-    
+
     const mutation = api.groups.createGroup.useMutation({
-        onSuccess: async () => {            
-            await utils.todos.getTodo.invalidate();            
-            await utils.todos.getTodo.refetch();            
+        onSuccess: async () => {
+            await utils.groups.getGroups.invalidate();
+            await utils.groups.getGroups.refetch();
         }
-    });    
-    
+    });
+
     const sendMutations = async () => {
-        try {            
+        try {
             console.log(groupState);
             if(!groupState.name || groupState.name === "") {
                 alert ("Nombre no dado");
@@ -195,7 +122,7 @@ const CreateGroupComponent = () => {
             }
             if(!groupState.isOpen) {
                 alert ("isOpen not provided");
-                return;                
+                return;
             }
             const response = await mutation.mutateAsync({
                 name: groupState.name,
@@ -214,15 +141,15 @@ const CreateGroupComponent = () => {
             alert(e)
         }
     };
-    
+
     const groupInputs: {label: string, labelId: string, placeholder: string, type: string, action: GroupAction, width: string}[] = [
         {label: "Nombre", labelId: "name", placeholder: "Grupo", type: "text", action: "name", width: "w-[40%]"},
-        {label: "Descripción", labelId: "description", placeholder: "Descripción", type: "text", action: "description", width: "w-[40%]"},        
-    ]    
-    
+        {label: "Descripción", labelId: "description", placeholder: "Descripción", type: "text", action: "description", width: "w-[40%]"},
+    ]
+
     return (
         <form className="flex flex-col items-center justify-center w-[85%] border-2 border-black rounded-md bg-[#333333] gap-5 p-5">
-            <h3>Crea un Grupo</h3>                                                
+            <h3>Crea un Grupo</h3>
             <div className="flex flex-row items-center justify-center rounded-md w-[85%] gap-2 py-2">
                 {groupInputs.map(grp => {
                     return (
@@ -230,48 +157,48 @@ const CreateGroupComponent = () => {
                         <label htmlFor={grp.labelId} className="font-semibold">
                             {grp.label}
                         </label>
-                        <input                                        
+                        <input
                             id={grp.labelId}
                             type={grp.type}
                             placeholder={grp.placeholder}
-                            className="text-white border-2 border-white rounded-md pl-3 py-1 w-[95%]"                                                
+                            className="text-white border-2 border-white rounded-md pl-3 py-1 w-[95%]"
                             onChange={(e) => {
                                 groupsDispatch({
                                 action: grp.action,
-                                newValue: e.target.value  
+                                newValue: e.target.value
                                 });
                             }}
-                        />                                    
+                        />
                     </div>
                     )
-                })}                        
+                })}
                 <div className="flex flex-col items-center justify-center flex-1 h-[100%] gap-2">
                     <label htmlFor="isOpen" className="font-semibold">{"¿Abierto?"}</label>
-                    <input 
-                    type="checkbox" 
+                    <input
+                    type="checkbox"
                     id="isOpen"
-                    onChange={e =>  {                                        
+                    onChange={e =>  {
                         groupsDispatch({
                             action: "isOpen",
                             newValue: e.target.checked
                         })
                     }}
                     />
-                </div>                
+                </div>
             </div>
             <div className="flex flex-col items-center justify-center gap-4">
-                {(groupState.profilePic) ? <img src={groupState.profilePic} alt="Imagen Seleccionada" className="w-[60%]"/> : <span id="file-name" className="ml-2 text-gray-500">{"Ningún archivo seleccionado"}</span>}                
+                {(groupState.profilePic) ? <img src={groupState.profilePic} alt="Imagen Seleccionada" className="w-[60%]"/> : <span id="file-name" className="ml-2 text-gray-500">{"Ningún archivo seleccionado"}</span>}
                 <label htmlFor="profilePic" className="font-semibold cursor-pointer bg-blue-700 px-4 py-2 rounded-md mb-2">
                     {"Seleccionar Foto del grupo"}
-                </label>                
-                <input 
+                </label>
+                <input
                     type="file"
                     accept="image/jpeg"
                     className="hidden"
                     id="profilePic"
                     onChange={(e) => {
                         const file = e.target.files ? e.target.files[0] : null;
-                        if (file) {                            
+                        if (file) {
                             const reader = new FileReader();
                             reader.onload = (event) => {
                                 if(event.target) {
@@ -284,17 +211,113 @@ const CreateGroupComponent = () => {
                             reader.readAsDataURL(file);
                         }
                     }}
-                />      
-            </div>          
-            <button 
-                className="bg-blue-500 text-white rounded-md px-5 py-2 hover:cursor-pointer hover:bg-blue-700" 
+                />
+            </div>
+            <button
+                className="bg-blue-500 text-white rounded-md px-5 py-2 hover:cursor-pointer hover:bg-blue-700"
                 type="button"
                 onClick={async () => await sendMutations()}
             >
                 {"Crear"}
-            </button>            
-        </form>    
+            </button>
+        </form>
     );
 };
 
 export default Todos;
+
+interface Input {
+    label: string,
+    labelId: string,
+    placeholder: string,
+}
+
+interface SimpleFormProps {
+    inputs: Input[]
+    className: string
+    title?: string
+    buttonMessage?: string
+    onSubmit: (formData: Record<string, string>) => void;
+}
+
+const SimpleForm = (props: SimpleFormProps) => {
+
+    const initialState = props.inputs.reduce((acc, input) => {
+        acc[input.labelId] = '';
+        return acc;
+    }, {} as FormState);
+
+    const [formState, dispatch] = useReducer(formReducer, initialState);
+
+    const handleChange = (fieldId: string, value: string) => {
+        dispatch({ type: 'UPDATE_FIELD', fieldId, value });
+    };
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        console.log('Form submitted:', formState);
+        props.onSubmit(formState);
+    };
+
+    return (
+        <form className={props.className} onSubmit={handleSubmit}>
+            <h3>{props.title ?? "Test Form"}</h3>
+            {props.inputs.map(input => {
+                return (
+                    <div key={input.labelId} className="flex flex-col gap-1 p-1">
+                        <label htmlFor={input.labelId}>{input.label}</label>
+                        <input
+                            type="text"
+                            id={input.labelId}
+                            placeholder={input.placeholder}
+                            className="rounded-md border-2 border-white p-1 pl-4"
+                            value={formState[input.labelId] ?? ''}
+                            onChange={(e) => handleChange(input.labelId, e.target.value)}
+                        />
+                    </div>
+                )
+            })}
+            <button type="submit"
+                className="border-2 rounded-md bg-blue-500 p-1 px-3"
+            >
+                {props.buttonMessage ?? "Enviar"}
+            </button>
+        </form>
+    )
+}
+
+interface NewUser {
+    email: string,
+    username: string,
+    password: string
+}
+
+const SignUpTest = () => {
+
+    const inputs: Input[] = [
+        {label: "Correo", labelId: "email", placeholder: "Correo"},
+        {label: "Username", labelId: "username", placeholder: "Nombre de Usuario"},
+        {label: "Contraseña", labelId: "password", placeholder: "Contraseña"}
+    ];
+
+    const mutation = api.auth.singUp.useMutation();
+
+    return (
+        <section className="flex flex-col items-center justify-center w-[25%] border-2 bg-[#222222] h-[100%] p-2 py-10 rounded-md border-2 border-black gap-5 p-5 py-10">
+            <SimpleForm
+            inputs={inputs}
+            title="Sign Up"
+            onSubmit={formData => {
+                mutation.mutate(formData as unknown as NewUser, {
+                    onSuccess: (data) => {
+                        console.log("Registro exitoso:", data);
+                    },
+                    onError: (error) => {
+                        console.error("Error en registro:", error);
+                    }
+                });
+            }}
+            className={"flex flex-col items-center justify-center gap-4 p-1 bg-[#333333] border-2 border-black rounded-md p-4"}/>
+        </section>
+    )
+}
