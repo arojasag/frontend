@@ -24,5 +24,5 @@ RUN npm run pre:${APP_MODE}
 
 CMD [\
 	"sh", "-c",\
-	"npm run ${APP_MODE:prod}"\
+	"npm run ${APP_MODE:-prod}"\
 	]
