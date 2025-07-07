@@ -3,17 +3,41 @@
 
 "use client"
 
-import { useReducer } from "react";
+import { useReducer, useState, type Dispatch, type SetStateAction } from "react";
 import { api } from "~/trpc/react";
 
+interface User {
+    email?: string
+    username?: string
+}
+
 const Testing = () => {
+
+    const [user, setUser] = useState<User>({
+        email: undefined,
+        username: undefined,
+    });
 
     return (
         <main className="flex flex-col items-center w-full min-h-[100vh] bg-[#111111] p-5 gap-5 text-white">
             <h1 className="text-3xl font-semibold text-white">Hola. Testing de tRPC</h1>
-            <div className="flex sm:flex-col lg:flex-row sm:items-center justify-center w-full gap-10">
-                <SignUpTest/>
-                <LoginTest/>
+            <div className="w-full">
+                <div className="flex flex-row items-center sm:w-full lg:w-[35%] border-2 rounded-lg border-black bg-[#222222] p-3 pl-10 text-white">
+                    <div className="flex flex-col gap-1 w-[80%]">
+                        <h2 className="mb-2 text-2xl">Usuario Logueado</h2>
+                        <p className="font-semibold text-white">{user.username}</p>
+                        <p className="text-white">{user.email}</p>
+                    </div>
+                    <button
+                    className="h-[20%] p-2 px-4 bg-blue-500 rounded-md hover:cursor-pointer hover:bg-blue-700"
+                    onClick={() => console.log("logout")}>
+                        Logout
+                    </button>
+                </div>
+            </div>
+            <div className="flex sm:flex-col lg:flex-row sm:items-center lg:items-start w-full gap-10">
+                <SignUpTest changeUser={{setUser}}/>
+                <LoginTest changeUser={{setUser}}/>
                 <GroupsTest/>
             </div>
         </main>
@@ -294,13 +318,21 @@ const CreateGroupComponent = () => {
     );
 };
 
+interface ChangeUserInfo {
+    setUser: Dispatch<SetStateAction<User>>
+}
+
 interface NewUser {
     email: string,
     username: string,
     password: string
 }
 
-const SignUpTest = () => {
+interface SignUpTestProps {
+    changeUser: ChangeUserInfo
+}
+
+const SignUpTest = (props: SignUpTestProps) => {
 
     const inputs: Input[] = [
         {label: "Correo", labelId: "email", placeholder: "Correo"},
@@ -319,6 +351,10 @@ const SignUpTest = () => {
                 mutation.mutate(formData as unknown as NewUser, {
                     onSuccess: (data) => {
                         console.log("Registro exitoso:", data);
+                        props.changeUser.setUser({
+                            username: data.username,
+                            email: data.email,
+                        })
                     },
                     onError: (error) => {
                         console.error("Error en registro:", error);
@@ -335,7 +371,11 @@ interface LoginUser {
     password: string
 }
 
-const LoginTest = () => {
+interface LoginTestProps {
+    changeUser: ChangeUserInfo
+}
+
+const LoginTest = (props: LoginTestProps) => {
 
     const inputs: Input[] = [
         {label: "Correo", labelId: "email", placeholder: "Correo"},
@@ -353,6 +393,10 @@ const LoginTest = () => {
                 mutation.mutate(formData as unknown as LoginUser, {
                     onSuccess: (data) => {
                         console.log("Registro exitoso:", data);
+                        props.changeUser.setUser({
+                            username: data.username,
+                            email: data.email
+                        })
                     },
                     onError: (error) => {
                         console.error("Error en registro:", error);
@@ -361,17 +405,6 @@ const LoginTest = () => {
             }}
             className={"flex flex-col items-center justify-center gap-4 p-1 bg-[#333333] border-2 border-black rounded-md p-4"}
             />
-            <div>
-                {mutation.data ?
-                    <div className="flex flex-col items-center justify-center">
-                        <h4>Usuario Logueado:</h4>
-                        <p>{mutation.data.email}</p>
-                        <p>{mutation.data.username}</p>
-                    </div>
-                 :
-                <h4> No hay usuario Logueado</h4>
-                }
-            </div>
         </section>
 
     )
