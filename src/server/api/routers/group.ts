@@ -38,9 +38,10 @@ export interface CreateGroupResponse {
 
 export const groupRouter = createTRPCRouter({
     getGroups: publicProcedure
-        .query(async () => {
+        .query(async ({ctx}) => {
             const grps = (await callGraphqlAPI<GetGroupsResponse>({
-                req: GET_GROUPS
+                req: GET_GROUPS,
+                authToken: ctx.authCookie?.value,
             })).data;
             return {
                 groups: grps?.groups.map(grp => ({
@@ -57,7 +58,7 @@ export const groupRouter = createTRPCRouter({
             profilePic: z.string().base64().optional(),
             isOpen: z.boolean()
         }))
-        .mutation(async({ input }) => {
+        .mutation(async({ input,ctx }) => {
             const response = (await callGraphqlAPI <CreateGroupResponse>({
                 req: CREATE_GROUP,
                 mutation: true,
@@ -71,8 +72,8 @@ export const groupRouter = createTRPCRouter({
                         },
                         isOpen: input.isOpen
                     }
-                }
-
+                },
+                authToken: ctx.authCookie?.value
             }))
             const grpCreated = response.data;
             if(!grpCreated) return grpCreated;
