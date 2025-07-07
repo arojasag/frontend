@@ -35,7 +35,7 @@ const Testing = () => {
                     </button>
                 </div>
             </div>
-            <div className="flex sm:flex-col lg:flex-row sm:items-center lg:items-start w-full gap-10">
+            <div className="flex flex-col lg:flex-row sm:items-center lg:items-start w-full gap-10">
                 <SignUpTest changeUser={{setUser}}/>
                 <LoginTest changeUser={{setUser}}/>
                 <GroupsTest/>
@@ -242,7 +242,7 @@ const CreateGroupComponent = () => {
     ]
 
     return (
-        <form className="flex flex-col items-center justify-center w-[85%] border-2 border-black rounded-md bg-[#333333] gap-5 p-5">
+        <form className="flex flex-col items-center justify-center w-[95%] border-2 border-black rounded-md bg-[#333333] gap-5 p-5">
             <h3>Crea un Grupo</h3>
             <div className="flex flex-row items-center justify-center rounded-md w-[85%] gap-2 py-2">
                 {groupInputs.map(grp => {
@@ -361,7 +361,7 @@ const SignUpTest = (props: SignUpTestProps) => {
                     }
                 });
             }}
-            className={"flex flex-col items-center justify-center gap-4 p-1 w-[80%] bg-[#333333] border-2 border-black rounded-md p-4"}/>
+            className={"flex flex-col items-center justify-center gap-4 px-3 w-full bg-[#333333] border-2 border-black rounded-md p-4"}/>
         </section>
     )
 }
@@ -403,7 +403,7 @@ const LoginTest = (props: LoginTestProps) => {
                     }
                 });
             }}
-            className={"flex flex-col items-center justify-center gap-4 p-1 bg-[#333333] border-2 border-black rounded-md p-4"}
+            className={"flex flex-col items-center justify-center w-[90%] gap-4 p-1 bg-[#333333] border-2 border-black rounded-md p-4"}
             />
         </section>
 
