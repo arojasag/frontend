@@ -20,5 +20,9 @@ EXPOSE 3000
 
 RUN echo "Running in $APP_MODE mode"
 
-RUN chmod +x ./entrypoint.sh
-ENTRYPOINT [ "./entrypoint.sh" ]
+RUN npm run pre:${APP_MODE}
+
+CMD [\
+	"sh", "-c",\
+	"npm run ${APP_MODE:-prod}"\
+	]
