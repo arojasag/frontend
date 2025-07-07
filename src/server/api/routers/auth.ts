@@ -4,7 +4,7 @@
 
 import { callGraphqlAPI } from "~/graphql/callGraphql"
 import { createTRPCRouter, publicProcedure } from "../trpc"
-import { LOGIN, SIGN_UP } from "~/graphql/documents"
+import { LOGIN, LOGOUT, SIGN_UP } from "~/graphql/documents"
 import { z } from "zod"
 import { TRPCError } from "@trpc/server"
 import { AUTH_TOKEN } from "~/server/api/constants"
@@ -106,5 +106,22 @@ export const authRouter = createTRPCRouter({
                     cause: response.errors
                 });
             }
+        }),
+    logout: publicProcedure
+        .mutation(async ({ ctx } ): Promise<boolean> => {
+            await callGraphqlAPI<{login: boolean}>({
+                req: LOGOUT,
+                mutation: true,
+                authToken: ctx.authCookie?.value
+            });
+            const cookie = [
+                `${AUTH_TOKEN}=`,
+                "HttpOnly",
+                "SameSite=Lax",
+                "Path=/",
+                "Expires=Thu, 01 Jan 1970 00:00:00 GMT"
+            ].join("; ");
+            ctx.headers.set("Set-Cookie", cookie)
+            return true;
         })
 })
