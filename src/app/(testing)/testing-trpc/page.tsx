@@ -13,10 +13,9 @@ interface User {
 
 const Testing = () => {
 
-    const [user, setUser] = useState<User>({
-        email: undefined,
-        username: undefined,
-    });
+    const [user, setUser] = useState<User|undefined>(undefined);
+
+    const logout = api.auth.logout.useMutation();
 
     return (
         <main className="flex flex-col items-center w-full min-h-[100vh] bg-[#111111] p-5 gap-5 text-white">
@@ -24,13 +23,22 @@ const Testing = () => {
             <div className="w-full">
                 <div className="flex flex-row items-center sm:w-full lg:w-[35%] border-2 rounded-lg border-black bg-[#222222] p-3 pl-10 text-white">
                     <div className="flex flex-col gap-1 w-[80%]">
-                        <h2 className="mb-2 text-2xl">Usuario Logueado</h2>
-                        <p className="font-semibold text-white">{user.username}</p>
-                        <p className="text-white">{user.email}</p>
+                        <h2 className="mb-2 text-2xl">
+                            {user ? "Usuario Logueado" : "No hay usuario logueado"}
+                        </h2>
+                        {user && (
+                            <>
+                                <p className="font-semibold text-white">{user.username}</p>
+                                <p className="text-white">{user.email}</p>
+                            </>
+                        )}
                     </div>
                     <button
                     className="h-[20%] p-2 px-4 bg-blue-500 rounded-md hover:cursor-pointer hover:bg-blue-700"
-                    onClick={() => console.log("logout")}>
+                    onClick={() => {
+                        logout.mutate()
+                        setUser(undefined)
+                    }}>
                         Logout
                     </button>
                 </div>
@@ -319,7 +327,7 @@ const CreateGroupComponent = () => {
 };
 
 interface ChangeUserInfo {
-    setUser: Dispatch<SetStateAction<User>>
+    setUser: Dispatch<SetStateAction<User|undefined>>
 }
 
 interface NewUser {
