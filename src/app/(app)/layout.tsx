@@ -1,19 +1,24 @@
 // app/(app)/layout.tsx
 
+import { api } from "~/trpc/server";
+import { redirect } from "next/navigation";
 import Header from "../_components/Header";
 
-// import { redirect } from "next/navigation";
+export default async function AppLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const session = await api.auth.getSession();
 
-export default function AppLayout({ children }: { children: React.ReactNode }) {
-  //   const isLoggedIn = true; // Real logic to check if the user is logged in
+  console.log("✅ SSR session from tRPC:", session);
 
-  //   if (!isLoggedIn) redirect("/sign-in");
+  if (!session) redirect("/sign-in");
 
   return (
     <main>
       <div className="mx-auto">
         <Header />
-
         <div className="bg-white">{children}</div>
       </div>
     </main>
