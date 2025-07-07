@@ -47,7 +47,6 @@ const handler = async (req: NextRequest) => {
     headers,
   });
 
-  console.log(returnResponse);
   return returnResponse;
 
 }

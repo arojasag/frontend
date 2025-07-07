@@ -3,8 +3,56 @@
 
 "use client"
 
-import { useReducer } from "react";
+import { useReducer, useState, type Dispatch, type SetStateAction } from "react";
 import { api } from "~/trpc/react";
+
+interface User {
+    email?: string
+    username?: string
+}
+
+const Testing = () => {
+
+    const [user, setUser] = useState<User|undefined>(undefined);
+
+    const logout = api.auth.logout.useMutation();
+
+    return (
+        <main className="flex flex-col items-center w-full min-h-[100vh] bg-[#111111] p-5 gap-5 text-white">
+            <h1 className="text-3xl font-semibold text-white">Hola. Testing de tRPC</h1>
+            <div className="w-full">
+                <div className="flex flex-row items-center sm:w-full lg:w-[35%] border-2 rounded-lg border-black bg-[#222222] p-3 pl-10 text-white">
+                    <div className="flex flex-col gap-1 w-[80%]">
+                        <h2 className="mb-2 text-2xl">
+                            {user ? "Usuario Logueado" : "No hay usuario logueado"}
+                        </h2>
+                        {user && (
+                            <>
+                                <p className="font-semibold text-white">{user.username}</p>
+                                <p className="text-white">{user.email}</p>
+                            </>
+                        )}
+                    </div>
+                    <button
+                    className="h-[20%] p-2 px-4 bg-blue-500 rounded-md hover:cursor-pointer hover:bg-blue-700"
+                    onClick={() => {
+                        logout.mutate()
+                        setUser(undefined)
+                    }}>
+                        Logout
+                    </button>
+                </div>
+            </div>
+            <div className="flex flex-col lg:flex-row sm:items-center lg:items-start w-full gap-10">
+                <SignUpTest changeUser={{setUser}}/>
+                <LoginTest changeUser={{setUser}}/>
+                <GroupsTest/>
+            </div>
+        </main>
+    )
+};
+
+export default Testing;
 
 type FormState = Record<string, string>;
 
@@ -26,49 +74,103 @@ const formReducer = (state: FormState, action: FormAction): FormState => {
   }
 };
 
-const Todos = () => {
+interface Input {
+    label: string,
+    labelId: string,
+    placeholder: string,
+}
+
+interface SimpleFormProps {
+    inputs: Input[]
+    className: string
+    title?: string
+    buttonMessage?: string
+    onSubmit: (formData: Record<string, string>) => void;
+}
+
+const SimpleForm = (props: SimpleFormProps) => {
+
+    const initialState = props.inputs.reduce((acc, input) => {
+        acc[input.labelId] = '';
+        return acc;
+    }, {} as FormState);
+
+    const [formState, dispatch] = useReducer(formReducer, initialState);
+
+    const handleChange = (fieldId: string, value: string) => {
+        dispatch({ type: 'UPDATE_FIELD', fieldId, value });
+    };
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        console.log('Form submitted:', formState);
+        props.onSubmit(formState);
+    };
+
+    return (
+        <form className={props.className} onSubmit={handleSubmit}>
+            <h3>{props.title ?? "Test Form"}</h3>
+            {props.inputs.map(input => {
+                return (
+                    <div key={input.labelId} className="flex flex-col gap-1 p-1">
+                        <label htmlFor={input.labelId}>{input.label}</label>
+                        <input
+                            type="text"
+                            id={input.labelId}
+                            placeholder={input.placeholder}
+                            className="rounded-md border-2 border-white p-1 pl-4"
+                            value={formState[input.labelId] ?? ''}
+                            onChange={(e) => handleChange(input.labelId, e.target.value)}
+                        />
+                    </div>
+                )
+            })}
+            <button type="submit"
+                className="border-2 rounded-md bg-blue-500 p-1 px-3"
+            >
+                {props.buttonMessage ?? "Enviar"}
+            </button>
+        </form>
+    )
+}
+
+const GroupsTest = () => {
 
     const { data: groupsData, error: groupsError, isLoading: groupsIsLoading } = api.groups.getGroups.useQuery(undefined, {
-    refetchOnWindowFocus: true,
-    refetchOnReconnect: true,
+        refetchOnWindowFocus: true,
+        refetchOnReconnect: true,
     });
 
     const groups = groupsData?.groups ?? [];
 
     return (
-        <main className="flex flex-col items-center w-full min-h-[100vh] bg-[#111111] p-5 gap-5 text-white">
-            <h1 className="text-3xl font-semibold text-white">Hola. Testing de tRPC</h1>
-            <div className="flex flex-row justify-center w-full gap-10">
-                <SignUpTest/>
-                <section className="flex flex-col items-center justify-center flex-1 border-2 bg-[#222222] h-[100%] p-2 py-10 rounded-md border-2 border-black gap-5 p-5 py-10">
-                    {groupsIsLoading  && <h1>{"Cargando Grupos"}</h1>}
-                    {groupsError      && <h1 className="text-red text-bold">{"Error consultando Grupos"}</h1> }
-                    {!groupsIsLoading && !groupsError && (
-                        <>
-                            <h2>Grupos</h2>
-                            <CreateGroupComponent/>
-                            <h3>Lista de Grupos</h3>
-                            <div className="grid grid-cols-2 w-full gap-5">
-                                {groups.map(grp => {
-                                    return (
-                                        <div
-                                            key={grp.id}
-                                            className="flex flex-col items-center justify-center rounded-md border-2 border-black bg-[#333333] p-5 gap-3"
-                                        >
-                                            <h4 className="font-semibold text-xl">{grp.name}</h4>
-                                            <p className="text-white">{grp.description}</p>
-                                            <img src={`data:image/${grp.profilePic.mimeType};base64,${grp.profilePic.data}`} alt={`${grp.name} pic`} />
-                                        </div>)
-                                    })
-                                }
-                            </div>
-                        </>
-                    )}
-                </section>
-            </div>
-        </main>
+    <section className="flex flex-col items-center justify-center sm:w-[100%] lg:flex-1 border-2 bg-[#222222] h-[100%] p-2 py-10 rounded-md border-2 border-black gap-5 p-5 py-10">
+        {groupsIsLoading  && <h1>{"Cargando Grupos"}</h1>}
+        {groupsError      && <h1 className="text-red text-bold">{"Error consultando Grupos"}</h1> }
+        {!groupsIsLoading && !groupsError && (
+            <>
+                <h2>Grupos</h2>
+                <CreateGroupComponent/>
+                <h3>Lista de Grupos</h3>
+                <div className="grid grid-cols-2 w-full gap-5">
+                    {groups.map(grp => {
+                        return (
+                            <div
+                                key={grp.id}
+                                className="flex flex-col items-center justify-center rounded-md border-2 border-black bg-[#333333] p-5 gap-3"
+                            >
+                                <h4 className="font-semibold text-xl">{grp.name}</h4>
+                                <p className="text-white">{grp.description}</p>
+                                <img src={`data:image/${grp.profilePic.mimeType};base64,${grp.profilePic.data}`} alt={`${grp.name} pic`} />
+                            </div>)
+                        })
+                    }
+                </div>
+            </>
+        )}
+    </section>
     )
-};
+}
 
 interface GroupToCreate {
     name?: string
@@ -148,7 +250,7 @@ const CreateGroupComponent = () => {
     ]
 
     return (
-        <form className="flex flex-col items-center justify-center w-[85%] border-2 border-black rounded-md bg-[#333333] gap-5 p-5">
+        <form className="flex flex-col items-center justify-center w-[95%] border-2 border-black rounded-md bg-[#333333] gap-5 p-5">
             <h3>Crea un Grupo</h3>
             <div className="flex flex-row items-center justify-center rounded-md w-[85%] gap-2 py-2">
                 {groupInputs.map(grp => {
@@ -224,66 +326,8 @@ const CreateGroupComponent = () => {
     );
 };
 
-export default Todos;
-
-interface Input {
-    label: string,
-    labelId: string,
-    placeholder: string,
-}
-
-interface SimpleFormProps {
-    inputs: Input[]
-    className: string
-    title?: string
-    buttonMessage?: string
-    onSubmit: (formData: Record<string, string>) => void;
-}
-
-const SimpleForm = (props: SimpleFormProps) => {
-
-    const initialState = props.inputs.reduce((acc, input) => {
-        acc[input.labelId] = '';
-        return acc;
-    }, {} as FormState);
-
-    const [formState, dispatch] = useReducer(formReducer, initialState);
-
-    const handleChange = (fieldId: string, value: string) => {
-        dispatch({ type: 'UPDATE_FIELD', fieldId, value });
-    };
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        console.log('Form submitted:', formState);
-        props.onSubmit(formState);
-    };
-
-    return (
-        <form className={props.className} onSubmit={handleSubmit}>
-            <h3>{props.title ?? "Test Form"}</h3>
-            {props.inputs.map(input => {
-                return (
-                    <div key={input.labelId} className="flex flex-col gap-1 p-1">
-                        <label htmlFor={input.labelId}>{input.label}</label>
-                        <input
-                            type="text"
-                            id={input.labelId}
-                            placeholder={input.placeholder}
-                            className="rounded-md border-2 border-white p-1 pl-4"
-                            value={formState[input.labelId] ?? ''}
-                            onChange={(e) => handleChange(input.labelId, e.target.value)}
-                        />
-                    </div>
-                )
-            })}
-            <button type="submit"
-                className="border-2 rounded-md bg-blue-500 p-1 px-3"
-            >
-                {props.buttonMessage ?? "Enviar"}
-            </button>
-        </form>
-    )
+interface ChangeUserInfo {
+    setUser: Dispatch<SetStateAction<User|undefined>>
 }
 
 interface NewUser {
@@ -292,7 +336,11 @@ interface NewUser {
     password: string
 }
 
-const SignUpTest = () => {
+interface SignUpTestProps {
+    changeUser: ChangeUserInfo
+}
+
+const SignUpTest = (props: SignUpTestProps) => {
 
     const inputs: Input[] = [
         {label: "Correo", labelId: "email", placeholder: "Correo"},
@@ -303,7 +351,7 @@ const SignUpTest = () => {
     const mutation = api.auth.singUp.useMutation();
 
     return (
-        <section className="flex flex-col items-center justify-center w-[25%] border-2 bg-[#222222] h-[100%] p-2 py-10 rounded-md border-2 border-black gap-5 p-5 py-10">
+        <section className="flex flex-col items-center justify-center sm:w-[80%] lg:w-[25%] border-2 bg-[#222222] h-[100%] p-2 py-10 rounded-md border-2 border-black gap-5 p-5 py-10">
             <SimpleForm
             inputs={inputs}
             title="Sign Up"
@@ -311,13 +359,62 @@ const SignUpTest = () => {
                 mutation.mutate(formData as unknown as NewUser, {
                     onSuccess: (data) => {
                         console.log("Registro exitoso:", data);
+                        props.changeUser.setUser({
+                            username: data.username,
+                            email: data.email,
+                        })
                     },
                     onError: (error) => {
                         console.error("Error en registro:", error);
                     }
                 });
             }}
-            className={"flex flex-col items-center justify-center gap-4 p-1 bg-[#333333] border-2 border-black rounded-md p-4"}/>
+            className={"flex flex-col items-center justify-center gap-4 px-3 w-full bg-[#333333] border-2 border-black rounded-md p-4"}/>
         </section>
     )
+}
+
+interface LoginUser {
+    email: string,
+    password: string
+}
+
+interface LoginTestProps {
+    changeUser: ChangeUserInfo
+}
+
+const LoginTest = (props: LoginTestProps) => {
+
+    const inputs: Input[] = [
+        {label: "Correo", labelId: "email", placeholder: "Correo"},
+        {label: "Contraseña", labelId: "password", placeholder: "Contraseña"}
+    ];
+
+    const mutation = api.auth.login.useMutation();
+
+    return (
+        <section className="flex flex-col items-center justify-center sm:w-[80%] lg:w-[25%] border-2 bg-[#222222] h-[100%] p-2 py-10 rounded-md border-2 border-black gap-5 p-5 py-10">
+            <SimpleForm
+            inputs={inputs}
+            title="Login"
+            onSubmit={formData => {
+                mutation.mutate(formData as unknown as LoginUser, {
+                    onSuccess: (data) => {
+                        console.log("Registro exitoso:", data);
+                        props.changeUser.setUser({
+                            username: data.username,
+                            email: data.email
+                        })
+                    },
+                    onError: (error) => {
+                        console.error("Error en registro:", error);
+                    }
+                });
+            }}
+            className={"flex flex-col items-center justify-center w-[90%] gap-4 p-1 bg-[#333333] border-2 border-black rounded-md p-4"}
+            />
+        </section>
+
+    )
+
 }

@@ -4,8 +4,10 @@
 
 import { callGraphqlAPI } from "~/graphql/callGraphql"
 import { createTRPCRouter, publicProcedure } from "../trpc"
-import { SIGN_UP } from "~/graphql/documents"
+import { LOGIN, LOGOUT, SIGN_UP } from "~/graphql/documents"
 import { z } from "zod"
+import { TRPCError } from "@trpc/server"
+import { AUTH_TOKEN } from "~/server/api/constants"
 
 interface User {
     id: string
@@ -15,6 +17,24 @@ interface User {
     authToken: string
 }
 
+type SignUpProcedureReturn = Omit<User, 'authToken'>
+
+type LoginUserReturn = Omit<User, 'id' | 'isSuperUser'>
+
+type LoginProcedureReturn = Omit<LoginUserReturn, 'authToken'>
+
+const setAuthCookie = (token: string, ctx: { headers: Headers }): void => {
+  const cookie = [
+    `${AUTH_TOKEN}=${token}`,
+    "HttpOnly",
+    // "Secure",
+    "SameSite=Lax",
+    "Path=/",
+    "Max-Age=3600"
+  ].join("; ");
+  ctx.headers.set("Set-Cookie", cookie);
+};
+
 export const authRouter = createTRPCRouter({
     singUp: publicProcedure
         .input(z.object({
@@ -22,34 +42,86 @@ export const authRouter = createTRPCRouter({
             password: z.string(),
             username: z.string(),
         }))
-        .mutation(async ({ input, ctx }) => {
-            const response = (await callGraphqlAPI<{signUp: User}>(
-                SIGN_UP,
-                true,
-                {
+        .mutation(async ({ input, ctx }): Promise<SignUpProcedureReturn> => {
+            const response = (await callGraphqlAPI<{signUp: User}>({
+                req: SIGN_UP,
+                mutation: true,
+                variables: {
                     input: {
                         email: input.email,
                         password: input.password,
                         username: input.username,
                     }
                 }
-            ))
+            }))
             if(!response.errors) {
-                if(response.data?.signUp.authToken) {
-                    const cookie = [
-                    `auth_token=${response.data?.signUp.authToken}`,
-                    "HttpOnly",
-                    "Secure",
-                    "SameSite=Lax",
-                    "Path=/",
-                    "Max-Age=3600"
-                    ].join("; ");
-                    ctx.headers.set("Set-Cookie", cookie);
+                if(response.data) { // This always happens
+                    const user = response.data.signUp;
+                    setAuthCookie(user.authToken, ctx);
+                    const { authToken: _, ...withoutAuthToken } = user;
+                    return withoutAuthToken;
+                } else {
+                    throw new Error("Invalid GraphQL Response, no data, no errors") // This will never happen
                 }
-                const { authToken: _, ...withoutAuthToken } = response.data?.signUp ?? {};
-                return withoutAuthToken;
             }
-            else return response.errors;
+            else {
+                  throw new TRPCError({
+                    code: "BAD_REQUEST",
+                    message: "Error en GraphQL",
+                    cause: response.errors
+                });
+            }
         })
         ,
+    login: publicProcedure
+        .input(z.object({
+            email: z.string().email(),
+            password: z.string(),
+        }))
+        .mutation(async ( { input, ctx } ): Promise<LoginProcedureReturn> => {
+            const response = (await callGraphqlAPI<{login: LoginUserReturn}>({
+                req: LOGIN,
+                mutation: true,
+                variables: {
+                    input: {
+                        email: input.email,
+                        password: input.password,
+                    }
+                }
+            }))
+            if(!response.errors) {
+                if(response.data) { // This always happens
+                    const user = response.data.login;
+                    setAuthCookie(user.authToken, ctx);
+                    const { authToken: _, ...withoutAuthToken } = user;
+                    return withoutAuthToken;
+                } else {
+                    throw new Error("Invalid GraphQL Response, no data, no errors") // This will never happen
+                }
+            }
+            else {
+                  throw new TRPCError({
+                    code: "BAD_REQUEST",
+                    message: "Error en GraphQL",
+                    cause: response.errors
+                });
+            }
+        }),
+    logout: publicProcedure
+        .mutation(async ({ ctx } ): Promise<boolean> => {
+            await callGraphqlAPI<{login: boolean}>({
+                req: LOGOUT,
+                mutation: true,
+                authToken: ctx.authCookie?.value
+            });
+            const cookie = [
+                `${AUTH_TOKEN}=`,
+                "HttpOnly",
+                "SameSite=Lax",
+                "Path=/",
+                "Expires=Thu, 01 Jan 1970 00:00:00 GMT"
+            ].join("; ");
+            ctx.headers.set("Set-Cookie", cookie)
+            return true;
+        })
 })
