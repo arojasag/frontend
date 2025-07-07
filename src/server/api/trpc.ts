@@ -12,6 +12,8 @@ import { ZodError } from "zod";
 
 import type { NextRequest } from 'next/server';
 
+import { AUTH_TOKEN } from "~/server/api/constants";
+
 /**
  * 1. CONTEXT
  *
@@ -29,8 +31,14 @@ export const createTRPCContext = async (opts: {
   headers: Headers,
 }) => {
 
+  const cookies = opts.req?.cookies.getAll();
+  const authCookie = cookies?.find(cookie => (
+    cookie.name === AUTH_TOKEN
+  ));
+
   return {
     ...opts,
+    authCookie
   };
 };
 

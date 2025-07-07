@@ -4,30 +4,6 @@
 
 import { gql } from "@apollo/client";
 
-/** Get some TODOS */
-export const GET_TODOS = gql`
-  query GetTodos {
-    todos {
-      id
-      text
-      user {
-        id
-        name
-      }
-    }
-  }
-`;
-
-/** Create a new TODO */
-export const CREATE_TODO = gql`
-  mutation CreateTodo($text: String!, $name: String!) {
-    createTodo(input: { text: $text, name: $name }) {
-      text
-      id      
-    }
-  }
-`;
-
 /** Get Groups */
 export const GET_GROUPS = gql `
   query fetchGroups {
@@ -71,5 +47,21 @@ export const SIGN_UP = gql`
         isSuperUser
         authToken
     }
+  }
+`
+
+export const LOGIN = gql`
+  mutation Login ($input: Login!){
+    login(input: $input) {
+      email
+      username
+      authToken
+    }
+  }
+`
+
+export const LOGOUT = gql`
+  mutation Logout {
+    logout
   }
 `
