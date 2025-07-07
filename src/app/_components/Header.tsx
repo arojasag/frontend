@@ -10,8 +10,14 @@ import {
   DropdownMenuTrigger,
 } from "~/app/_components/ui/dropdown-menu";
 // import { signOut } from "next-auth/react"; // Adjust the import based on your auth setup
+import { useRouter } from "next/navigation";
+import { api } from "~/trpc/react";
+
+// Dentro de tu componente Header
 
 const Header = () => {
+  const router = useRouter();
+  const logout = api.auth.logout.useMutation();
   return (
     <nav className="header sticky border-b">
       <Link href="/feed">
@@ -96,16 +102,20 @@ const Header = () => {
               asChild
               className="mt-1 w-full cursor-pointer text-[#e32424]"
             >
-              {/* <form
-                action={async () => {
-                  "use server";
-
-                  await signOut();
+              <button
+                onClick={() => {
+                  logout.mutate(undefined, {
+                    onSuccess: () => {
+                      router.replace("/sign-in");
+                    },
+                    onError: (err) => {
+                      console.error("Error al cerrar sesión:", err);
+                    },
+                  });
                 }}
-                className="mb-0"
-              > */}
-              <button type="submit">Cerrar sesión</button>
-              {/* </form> */}
+              >
+                Cerrar sesión
+              </button>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
