@@ -21,7 +21,7 @@ import {
   FormMessage,
 } from "~/app/_components/ui/form";
 import { Input } from "~/app/_components/ui/input";
-// import { toast } from "sonner";
+import { toast } from "sonner";
 // import Image from "next/image";
 import Link from "next/link";
 import { FIELD_NAMES, FIELD_TYPES, FIELD_PLACEHOLDERS } from "~/constants";
@@ -32,7 +32,7 @@ import { useEffect, useState } from "react";
 interface Props<T extends FieldValues> {
   schema: ZodType<T>;
   defaultValues: T;
-  // onSubmit: (data: T) => Promise<{ success: boolean; error?: string }>;
+  onSubmit: (data: T) => Promise<{ success: boolean; error?: string }>;
   type: "SIGN_IN" | "SIGN_UP";
 }
 
@@ -40,7 +40,7 @@ const AuthForm = <T extends FieldValues>({
   type,
   schema,
   defaultValues,
-  // onSubmit, // Uncomment if you want to use onSubmit prop
+  onSubmit, // Uncomment if you want to use onSubmit prop
 }: Props<T>) => {
   // const [isLoading, setIsLoading] = useState(false);
   // const [errorMessage, setErrorMessage] = useState("");
@@ -61,23 +61,23 @@ const AuthForm = <T extends FieldValues>({
 
   const handleSubmit: SubmitHandler<T> = async (data) => {
     console.log("values", data);
-    // const result = await onSubmit(data);
+    const result = await onSubmit(data);
 
-    // if (result.success) {
-    //   toast.success(
-    //     `Usuario ${isSignIn ? "iniciado sesión" : "registrado"} exitosamente!`,
-    //     {
-    //       duration: 3000,
-    //     }
-    // );
+    if (result.success) {
+      toast.success(
+        `Usuario ${isSignIn ? "iniciado sesión" : "registrado"} exitosamente!`,
+        {
+          duration: 3000,
+        },
+      );
 
-    router.push(next ?? "/feed");
-    // } else {
-    //   toast.error(`Error: ${result.error}`, {
-    //     duration: 3000,
-    //   });
-    //   // setErrorMessage(result.error);
-    // }
+      router.push(next ?? "/feed");
+    } else {
+      toast.error(`Error: ${result.error}`, {
+        duration: 3000,
+      });
+      // setErrorMessage(result.error);
+    }
   };
 
   return (

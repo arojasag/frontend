@@ -10,7 +10,7 @@ import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
-import type { NextRequest } from 'next/server';
+import type { NextRequest } from "next/server";
 
 import { AUTH_TOKEN } from "~/server/api/constants";
 
@@ -27,18 +27,37 @@ import { AUTH_TOKEN } from "~/server/api/constants";
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts: {
-  req?: NextRequest,
-  headers: Headers,
+  req?: NextRequest;
+  headers: Headers;
 }) => {
+  let authCookie: { name: string; value: string } | undefined;
 
-  const cookies = opts.req?.cookies.getAll();
-  const authCookie = cookies?.find(cookie => (
-    cookie.name === AUTH_TOKEN
-  ));
+  // ✅ Caso 1: API route (con NextRequest)
+  if (opts.req) {
+    const cookies = opts.req.cookies.getAll();
+    const found = cookies.find((c) => c.name === AUTH_TOKEN);
+    if (found) {
+      authCookie = { name: found.name, value: found.value };
+    }
+  } else {
+    // ✅ Caso 2: SSR (getServerSideProps, RSC)
+    const cookieHeader = opts.headers.get("cookie");
+    const cookies = Object.fromEntries(
+      (cookieHeader ?? "")
+        .split(";")
+        .map((cookie) => cookie.trim().split("=") as [string, string])
+        .filter(([k, v]) => !!k && !!v),
+    ) as Record<string, string>;
+
+    const token = cookies[AUTH_TOKEN];
+    if (token) {
+      authCookie = { name: AUTH_TOKEN, value: token };
+    }
+  }
 
   return {
     ...opts,
-    authCookie
+    authCookie,
   };
 };
 

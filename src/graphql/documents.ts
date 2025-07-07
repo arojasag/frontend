@@ -5,7 +5,7 @@
 import { gql } from "@apollo/client";
 
 /** Get Groups */
-export const GET_GROUPS = gql `
+export const GET_GROUPS = gql`
   query fetchGroups {
     groups {
       id
@@ -39,29 +39,40 @@ export const CREATE_GROUP = gql`
 
 /** Sign Up */
 export const SIGN_UP = gql`
-  mutation SignUp ($input: SignUp!){
+  mutation SignUp($input: SignUp!) {
     signUp(input: $input) {
-        id
-        email
-        username
-        isSuperUser
-        authToken
+      id
+      email
+      username
+      isSuperUser
+      authToken
     }
   }
-`
+`;
 
 export const LOGIN = gql`
-  mutation Login ($input: Login!){
+  mutation Login($input: Login!) {
     login(input: $input) {
       email
       username
       authToken
     }
   }
-`
+`;
 
 export const LOGOUT = gql`
   mutation Logout {
     logout
   }
-`
+`;
+
+export const AUTH_ME = gql`
+  query AuthMe {
+    authme {
+      id
+      email
+      username
+      isSuperUser
+    }
+  }
+`;
