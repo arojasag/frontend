@@ -59,3 +59,9 @@ export const LOGIN = gql`
     }
   }
 `
+
+export const LOGOUT = gql`
+  mutation Logout {
+    logout
+  }
+`
