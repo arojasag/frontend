@@ -2,6 +2,8 @@ import { HydrateClient } from "~/trpc/server";
 import Hero from "../_components/landingPage/Hero";
 import os from "os";
 
+export const dynamic = "force-dynamic"
+
 export default async function Home() {
   const hostname = os.hostname();
 
